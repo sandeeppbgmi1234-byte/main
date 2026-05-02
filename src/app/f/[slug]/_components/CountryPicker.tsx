@@ -85,7 +85,7 @@ export const CountryPicker = ({
 
       {/* Searchable dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-slate-200 rounded-lg shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-2 border-b border-slate-50 flex items-center gap-2 bg-slate-50/50">
             <Search size={14} className="text-slate-400 shrink-0" />
             <input

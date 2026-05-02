@@ -32,6 +32,9 @@ export const BILLING_CONFIG = {
   GRANDFATHER_CUTOFF: "2026-04-05",
 } as const;
 
+// Max forms a FREE plan workspace can create. Change this number to adjust the cap.
+export const FREE_FORM_LIMIT = 3;
+
 /**
  * Calculates the effective account limit for a user/workspace,
  * applying legacy grandfathering policies where applicable.
@@ -84,6 +87,7 @@ export const PLANS: Record<
     hasBestPerformer: boolean;
     priceInRupees: number;
     razorpayPlanId: string | null;
+    maxForms: number;
   }
 > = {
   FREE: {
@@ -94,6 +98,7 @@ export const PLANS: Record<
     hasBestPerformer: true,
     priceInRupees: 0,
     razorpayPlanId: null,
+    maxForms: FREE_FORM_LIMIT,
   },
   BASIC: {
     creditLimit: 20,
@@ -103,6 +108,7 @@ export const PLANS: Record<
     hasBestPerformer: false,
     priceInRupees: 99,
     razorpayPlanId: process.env.RAZORPAY_PLAN_ID_BASIC ?? null,
+    maxForms: -1,
   },
   PREMIUM: {
     creditLimit: 30,
@@ -112,6 +118,7 @@ export const PLANS: Record<
     hasBestPerformer: false,
     priceInRupees: 279,
     razorpayPlanId: process.env.RAZORPAY_PLAN_ID_PREMIUM ?? null,
+    maxForms: -1,
   },
   BLACK: {
     creditLimit: -1,
@@ -121,6 +128,7 @@ export const PLANS: Record<
     hasBestPerformer: true,
     priceInRupees: 479,
     razorpayPlanId: process.env.RAZORPAY_PLAN_ID_BLACK ?? null,
+    maxForms: -1,
   },
 } as const;
 

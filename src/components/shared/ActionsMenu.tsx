@@ -95,7 +95,7 @@ export function ActionsMenu({
   return (
     <div
       ref={menuRef}
-      className="shadow-sm absolute right-0 top-8 z-50 min-w-[150px] rounded-xl border border-slate-100 bg-white animate-in fade-in zoom-in-95 duration-100 p-2"
+      className="shadow-sm absolute right-0 top-8 z-50 min-w-[150px] rounded-lg border border-slate-100 bg-white animate-in fade-in zoom-in-95 duration-100 p-2"
     >
       {menuItems.map(({ key, label, className, bg }) => (
         <button

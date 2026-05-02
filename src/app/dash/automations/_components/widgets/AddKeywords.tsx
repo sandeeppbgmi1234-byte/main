@@ -55,7 +55,7 @@ const AddKeywords = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-purple-300 w-full">
+    <div className="bg-white rounded-lg border border-purple-300 w-full">
       <button
         type="button"
         className="w-full flex items-center justify-between px-4 py-3.5 text-left"

@@ -34,7 +34,7 @@ const ImageAnswer = ({ url, name }: { url: string; name?: string }) => {
 
   return (
     <div
-      className="relative mt-2 rounded-xl overflow-hidden border border-slate-100 cursor-pointer group"
+      className="relative mt-2 rounded-lg overflow-hidden border border-slate-100 cursor-pointer group"
       style={{ maxWidth: "100%", maxHeight: 240 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -44,13 +44,13 @@ const ImageAnswer = ({ url, name }: { url: string; name?: string }) => {
         src={url}
         alt="Uploaded image"
         onError={() => setHasError(true)}
-        className="w-full h-auto object-cover rounded-xl"
+        className="w-full h-auto object-cover rounded-lg"
         style={{ maxHeight: 240 }}
       />
 
       {/* Hover overlay */}
       <div
-        className="absolute inset-0 flex items-center justify-center rounded-xl transition-all duration-200"
+        className="absolute inset-0 flex items-center justify-center rounded-lg transition-all duration-200"
         style={{
           background: isHovered ? "rgba(0,0,0,0.45)" : "transparent",
           pointerEvents: isHovered ? "auto" : "none",
@@ -78,7 +78,7 @@ const FileAnswer = ({ url, name }: { url: string; name?: string }) => {
   const filename = name || getFileNameFromUrl(url);
 
   return (
-    <div className="mt-2 flex items-center justify-between gap-2 px-3 py-2.5 bg-[#EDE9FF] rounded-xl border border-[#D6CFFF]">
+    <div className="mt-2 flex items-center justify-between gap-2 px-3 py-2.5 bg-[#EDE9FF] rounded-lg border border-[#D6CFFF]">
       <div className="flex items-center gap-2 min-w-0">
         <FileDown size={15} className="text-[#6A06E4] shrink-0" />
         <span className="text-xs font-semibold text-slate-700 truncate">

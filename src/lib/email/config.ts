@@ -6,6 +6,8 @@ const isProduction = process.env.NODE_ENV === "production";
 const appUrl = process.env.APP_URL;
 const fromEmail = process.env.RESEND_FROM_EMAIL;
 
+export const IS_PRODUCTION = isProduction;
+
 // Enforce required environment variables in production to prevent silent failures
 if (isProduction) {
   if (!appUrl) {

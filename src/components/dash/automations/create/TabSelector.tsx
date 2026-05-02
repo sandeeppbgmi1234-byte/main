@@ -37,7 +37,7 @@ export default function TabSelector({
           type="button"
           role="tab"
           aria-selected={tab.id === activeTab}
-          className={`group relative rounded-xl border p-6 transition-all cursor-pointer flex flex-col text-left ${
+          className={`group relative rounded-lg border p-6 transition-all cursor-pointer flex flex-col text-left ${
             tab.id === activeTab
               ? "bg-white border-purple-200 shadow-sm"
               : "border-gray-100 bg-gray-50/50 hover:bg-white hover:border-purple-200 hover:shadow-sm"

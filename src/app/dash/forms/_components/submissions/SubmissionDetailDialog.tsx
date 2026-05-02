@@ -40,7 +40,7 @@ export const SubmissionDetailDialog = ({
     <Dialog open={!!submission} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="sm:max-w-full p-0 overflow-hidden rounded-xl"
+        className="sm:max-w-full p-0 overflow-hidden rounded-lg"
       >
         <DialogHeader className="px-8 pt-8 pb-4">
           <div className="flex justify-between items-center">

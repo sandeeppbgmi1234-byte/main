@@ -142,7 +142,7 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
                 <Button
                   onClick={handleUpdate}
                   disabled={isLoading}
-                  className="bg-[#6A06E4] hover:bg-[#5a05c4] text-white gap-2 h-10 px-4 transition-all rounded-lg shadow-md"
+                  className="bg-[#6A06E4] hover:bg-[#5a05c4] text-white gap-2 h-10 px-4 transition-all rounded-sm shadow-md"
                 >
                   Update
                 </Button>

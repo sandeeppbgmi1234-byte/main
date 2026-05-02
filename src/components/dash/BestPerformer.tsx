@@ -206,7 +206,7 @@ export function BestPerformerWidget({
               <h4 className="text-[#1E293B] font-bold text-base">
                 Best Time To Post
               </h4>
-              <div className="w-[130px] h-[130px] rounded-[20px] overflow-hidden   border-4 border-white relative transition-transform duration-300">
+              <div className="w-[130px] h-[130px] rounded-lg overflow-hidden   border-4 border-white relative transition-transform duration-300">
                 {config.bestTimeData.imageUrl ? (
                   <Image
                     src={config.bestTimeData.imageUrl}

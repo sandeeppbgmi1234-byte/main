@@ -1,13 +1,4 @@
-/**
- * Follower Growth Service
- * Handles fetching stats and acting as a pseudo-cron for daily snapshots
- */
-
-import {
-  createFollowerSnapshot,
-  getFollowerSnapshots,
-} from "@/server/repository/instagram/follower-snapshot.repository";
-import { fetchInstagramUserData } from "@/server/instagram/oauth/oauth";
+import { getFollowerSnapshots } from "@/server/repository/instagram/follower-snapshot.repository";
 import { ApiRouteError } from "@/server/middleware/errors/classes";
 import { prisma } from "@/server/db";
 
@@ -16,91 +7,78 @@ interface DataPoint {
   value: number;
 }
 
+/**
+ * Follower Growth Service (Refactored)
+ * Returns the sum of followers gained via automations (Attribution)
+ * and the daily net growth trend from snapshots (Chart Data).
+ */
 export async function getFollowersGrowthStats(
   instaAccountId: string,
   rangeLabel: string,
 ) {
   const account = await prisma.instaAccount.findUnique({
     where: { id: instaAccountId, isActive: true },
-    select: { id: true, accessToken: true },
+    select: { id: true },
   });
+
   if (!account) {
     throw new ApiRouteError("Instagram account not found", "NOT_FOUND", 404);
   }
 
-  const nowUtc = new Date();
+  // Determine date range for the widget
+  const now = new Date();
   const todayUtc = new Date(
-    Date.UTC(
-      nowUtc.getUTCFullYear(),
-      nowUtc.getUTCMonth(),
-      nowUtc.getUTCDate(),
-    ),
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
   );
 
-  // 1. Pseudo-Cron: Check if we need to take a snapshot today
-  const existingToday = await prisma.instaFollowerSnapshot.findFirst({
-    where: { instaAccountId, date: todayUtc },
-  });
-
-  if (!existingToday) {
-    try {
-      const igData = await fetchInstagramUserData(account.accessToken);
-      if (igData && typeof igData.followers_count === "number") {
-        await createFollowerSnapshot(
-          instaAccountId,
-          igData.followers_count,
-          todayUtc,
-        );
-      }
-    } catch (error) {
-      console.error(
-        "Failed to fetch fresh follower count for snapshot:",
-        error,
-      );
-    }
-  }
-
-  // 2. Determine date range for the widget
   let daysParam = 7;
   const rangeMatch = rangeLabel.match(/^Last (\d+)\s*(days?)$/i);
   if (rangeMatch) {
     daysParam = parseInt(rangeMatch[1], 10);
+  } else if (rangeLabel === "Last 30 days") {
+    daysParam = 30;
   } else if (rangeLabel === "All time") {
-    daysParam = 30; // Fallback or we could calculate since joined. Since they wanted same UI, let's keep ranges simple.
+    daysParam = 90; // Limit chart to 90 days for performance
   }
 
   const startDateUtc = new Date(
     todayUtc.getTime() - (daysParam - 1) * 24 * 60 * 60 * 1000,
   );
 
-  // 3. Fetch snapshots in range
-  const snapshots = await getFollowerSnapshots(instaAccountId, startDateUtc);
+  // 1. ATTRIBUTION: Sum of followers gained via automations
+  // We respect the filter by looking at automations that were active/triggered in these days
+  const attributedSum = await prisma.automation.aggregate({
+    where: {
+      instaAccountId,
+      status: { in: ["ACTIVE", "STOPPED"] },
+      // We sum for automations that were last triggered in this window as a proxy for relevance
+      lastTriggeredAt:
+        rangeLabel === "All time" ? undefined : { gte: startDateUtc },
+    },
+    _sum: {
+      newFollowersGained: true,
+    },
+  });
 
-  let lastKnownCount = 0;
-  if (snapshots.length === 0 || snapshots[0].date > startDateUtc) {
-    const baselineSnapshot = await prisma.instaFollowerSnapshot.findFirst({
-      where: { instaAccountId, date: { lt: startDateUtc } },
-      orderBy: { date: "desc" },
-    });
+  const totalGained = attributedSum._sum.newFollowersGained || 0;
 
-    if (baselineSnapshot) {
-      lastKnownCount = baselineSnapshot.followersCount;
-    } else if (snapshots.length > 0) {
-      // If we don't have an older baseline, use the very first snapshot we found as the baseline
-      lastKnownCount = snapshots[0].followersCount;
-    }
-  } else {
-    lastKnownCount = snapshots[0].followersCount;
-  }
+  // 2. CHART DATA: Daily Net Growth (Deltas)
+  // To calculate the delta for the first day, we need the day before the start date
+  const startDateMinusOne = new Date(
+    startDateUtc.getTime() - 24 * 60 * 60 * 1000,
+  );
 
-  // 5. Fill gaps using Option A (Carry Forward)
-  const chartData: DataPoint[] = [];
+  const snapshots = await getFollowerSnapshots(
+    instaAccountId,
+    startDateMinusOne,
+  );
+
   const snapshotMap = new Map<number, number>();
-
   snapshots.forEach((snap) => {
     snapshotMap.set(snap.date.getTime(), snap.followersCount);
   });
 
+  const chartData: DataPoint[] = [];
   const monthNames = [
     "Jan",
     "Feb",
@@ -117,32 +95,27 @@ export async function getFollowersGrowthStats(
   ];
 
   for (let i = 0; i < daysParam; i++) {
-    const currentDayUtc = new Date(
-      startDateUtc.getTime() + i * 24 * 60 * 60 * 1000,
-    );
-    const dayTime = currentDayUtc.getTime();
+    const currentDayTime = startDateUtc.getTime() + i * 24 * 60 * 60 * 1000;
+    const prevDayTime = currentDayTime - 24 * 60 * 60 * 1000;
 
-    if (snapshotMap.has(dayTime)) {
-      lastKnownCount = snapshotMap.get(dayTime)!;
+    const currentCount = snapshotMap.get(currentDayTime);
+    const prevCount = snapshotMap.get(prevDayTime);
+
+    // Default delta to 0 if data is missing
+    let dailyDelta = 0;
+    if (currentCount !== undefined && prevCount !== undefined) {
+      dailyDelta = currentCount - prevCount;
     }
 
-    // Format label like "3 Nov" (matching the DUMMY_CONFIG)
-    const day = currentDayUtc.getUTCDate();
-    const month = monthNames[currentDayUtc.getUTCMonth()];
-
+    const dateObj = new Date(currentDayTime);
     chartData.push({
-      label: `${day} ${month}`,
-      value: lastKnownCount,
+      label: `${dateObj.getUTCDate()} ${monthNames[dateObj.getUTCMonth()]}`,
+      value: dailyDelta,
     });
   }
 
-  // Net growth calculation
-  const startCount = chartData[0]?.value || 0;
-  const endCount = chartData[chartData.length - 1]?.value || 0;
-  const newFollowers = endCount - startCount;
-
   return {
-    growth: newFollowers >= 0 ? newFollowers : 0, // usually we show positive text, or net change
+    growth: totalGained,
     data: chartData,
   };
 }

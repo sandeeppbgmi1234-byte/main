@@ -1,6 +1,6 @@
 import { render } from "@react-email/render";
 import * as React from "react";
-import { EMAIL_CONFIG } from "./config";
+import { IS_PRODUCTION, EMAIL_CONFIG } from "./config";
 import { getResendClient } from "./resend";
 import { AccountExpiredEmail } from "./templates/account-expired";
 import { InvoiceEmail } from "./templates/invoice";
@@ -77,6 +77,14 @@ export async function sendEmail(payload: EmailPayload): Promise<void> {
         throw new Error(
           `EMAIL_SERVICE_ERROR: Unsupported email type: ${(payload as any).type}`,
         );
+    }
+
+    // Skip actual sending if not in production to prevent accidental emails during dev/test
+    if (!IS_PRODUCTION) {
+      console.info(
+        `[EMAIL_SKIPPED] Type: ${payload.type}, Recipient: ${maskEmail(to)} (Reason: Environment is not production)`,
+      );
+      return;
     }
 
     // Initialize client lazily only when a send attempt is actually made

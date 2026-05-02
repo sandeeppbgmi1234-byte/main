@@ -10,6 +10,7 @@ import {
   formatBillingDate,
   getPlanLabel,
 } from "@/lib/billing";
+import { DashboardCard } from "./DashboardCard";
 
 /**
  * PlansAndBilling Component
@@ -45,26 +46,22 @@ const PlansAndBilling = async () => {
     pending: { icon: Clock, bg: "bg-[#FEF3C7]", text: "text-[#D97706]" },
   };
 
-  return (
-    <div className="bg-white rounded-xl p-6 border border-gray-100 w-full max-w-sm h-full flex flex-col gap-4">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-[#1E293B]">
-            Plans & Billing
-          </h2>
-          <span className="bg-[#DCFCE7] text-[#166534] text-[8px] p-1 border border-[#BBF7D0] font-medium rounded-sm uppercase tracking-widest">
-            {subscription?.status || "ACTIVE"}
-          </span>
-        </div>
-        <Link
-          href="/dash/settings?tab=billing"
-          className="text-[#6A06E5] font-medium text-lg hover:opacity-80 transition-opacity"
-        >
-          Manage
-        </Link>
-      </div>
+  const action = (
+    <div className="flex items-center gap-2">
+      {/* <span className="bg-[#DCFCE7] text-[#166534] text-[8px] p-1 border border-[#BBF7D0] font-medium rounded-sm uppercase tracking-widest leading-none">
+        {subscription?.status || "ACTIVE"}
+      </span> */}
+      <Link
+        href="/dash/settings?tab=billing"
+        className="text-[#6A06E5] font-medium text-lg hover:opacity-80 transition-opacity"
+      >
+        Manage
+      </Link>
+    </div>
+  );
 
+  return (
+    <DashboardCard title="Plans & Billing" action={action}>
       {/* Plan Details */}
       <div className="space-y-4 flex flex-col justify-center">
         <div className="flex flex-col gap-1">
@@ -99,11 +96,11 @@ const PlansAndBilling = async () => {
 
       {/* Billing History Section */}
       {invoices.length > 0 && (
-        <div className="h-full">
+        <div className="h-full mt-2">
           <h4 className="text-lg font-medium text-[#1E293B] tracking-tight">
             History
           </h4>
-          <div className="flex flex-col overflow-y-auto max-h-48">
+          <div className="flex flex-col overflow-y-auto max-h-48 scrollbar-hide">
             {invoices.slice(0, 3).map((invoice, i) => {
               const config =
                 statusConfig[invoice.status] || statusConfig.pending;
@@ -138,7 +135,7 @@ const PlansAndBilling = async () => {
           </div>
         </div>
       )}
-    </div>
+    </DashboardCard>
   );
 };
 

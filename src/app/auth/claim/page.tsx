@@ -52,7 +52,7 @@ export default function ClaimPage() {
               onClick={handleLogoutAndRedirect}
               className="w-full group p-5 bg-white border-2 border-gray-100 rounded-2xl flex items-center text-left hover:border-purple-500 transition-all duration-300 transform hover:-translate-y-1"
             >
-              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center group-hover:bg-purple-600 transition-colors">
+              <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center group-hover:bg-purple-600 transition-colors">
                 <Mail className="w-6 h-6 text-purple-600 group-hover:text-white" />
               </div>
               <div className="ml-4 flex-1">
@@ -71,7 +71,7 @@ export default function ClaimPage() {
               href="/dash"
               className="w-full group p-5 bg-white border-2 border-gray-100 rounded-2xl flex items-center text-left hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1"
             >
-              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+              <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
                 <Instagram className="w-6 h-6 text-blue-600 group-hover:text-white" />
               </div>
               <div className="ml-4 flex-1">

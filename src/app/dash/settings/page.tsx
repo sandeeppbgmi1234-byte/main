@@ -74,7 +74,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-full w-full flex flex-col items-center md:py-8 px-4 md:px-8 gap-6">
+    <div className="min-h-full w-full flex flex-col items-center md:py-8 px-4 md:px-8 gap-6 justify-center">
       {/* Mobile-only header to provide sidebar trigger */}
       <div className="md:hidden w-full">
         <MobileDashboardHeader title="Settings" showSearch={false} />
@@ -87,7 +87,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         </div>
 
         {/* Content Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-10">
+        <div className="bg-white rounded-2xl border border-gray-200 px-6 md:px-10 p-12">
           {renderTabContent()}
         </div>
       </div>

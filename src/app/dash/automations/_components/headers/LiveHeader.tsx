@@ -69,7 +69,7 @@ export default function LiveHeader({
           <Button
             type="submit"
             disabled={isUpdating || isMediaUploading}
-            className="w-10 h-10 p-0 bg-indigo-600 hover:bg-indigo-700 transition-all text-white rounded-md flex items-center justify-center disabled:bg-indigo-400 disabled:opacity-50"
+            className="h-10 p-0 bg-indigo-600 hover:bg-indigo-700 transition-all text-white rounded-md flex items-center justify-center disabled:bg-indigo-400 disabled:opacity-50"
             title="Update"
             aria-label="Update Automation"
           >
@@ -77,6 +77,7 @@ export default function LiveHeader({
               size={18}
               className={isUpdating && !isMediaUploading ? "animate-spin" : ""}
             />
+            {!isMobile && <p className="text-sm font-medium">Update</p>}
           </Button>
         )}
 
@@ -85,7 +86,7 @@ export default function LiveHeader({
             type="button"
             onClick={onStop}
             disabled={isStopping}
-            className="w-10 h-10 p-0 bg-red-500 hover:bg-red-600 transition-all text-white rounded-md flex items-center justify-center"
+            className="h-10 p-0 bg-red-500 hover:bg-red-600 transition-all text-white rounded-md flex items-center justify-center"
             title="Stop"
             aria-label="Stop Automation"
           >
@@ -94,6 +95,7 @@ export default function LiveHeader({
             ) : (
               <Square size={16} fill="currentColor" />
             )}
+            {!isMobile && <p className="text-sm font-medium">Stop</p>}
           </Button>
         ) : (
           <Button

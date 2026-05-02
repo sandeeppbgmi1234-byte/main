@@ -25,7 +25,7 @@ export function UpgradeTooltip({
         <TooltipPrimitive.Content
           side={side}
           sideOffset={sideOffset}
-          className="z-50 bg-[#E9D5FF] text-[#2E1065] border border-[#9B4DCA] px-7 py-5 rounded-xl shadow-sm animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+          className="z-50 bg-[#E9D5FF] text-[#2E1065] border border-[#9B4DCA] px-7 py-5 rounded-lg shadow-sm animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
         >
           <p className="text-center font-medium text-[16px] leading-snug">
             To use this feature <br /> you need to upgrade!

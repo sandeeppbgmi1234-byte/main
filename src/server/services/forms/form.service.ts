@@ -66,6 +66,7 @@ export async function createForm(
   clerkId: string,
   instaAccountId: string,
   input: CreateFormInput,
+  maxForms: number = -1,
 ) {
   const user = await findUserByClerkId(clerkId);
   if (!user) {
@@ -86,7 +87,7 @@ export async function createForm(
     );
   }
 
-  const form = await createFormRecord(user.id, instaAccountId, input);
+  const form = await createFormRecord(user.id, instaAccountId, input, maxForms);
 
   return {
     id: form.id,
@@ -304,6 +305,7 @@ export async function duplicateForm(
   clerkId: string,
   instaAccountId: string,
   formId: string,
+  maxForms: number = -1,
 ) {
   const user = await findUserByClerkId(clerkId);
   if (!user) {
@@ -330,6 +332,7 @@ export async function duplicateForm(
     user.id,
     instaAccountId,
     duplicateInput,
+    maxForms,
   );
 
   return {

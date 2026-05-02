@@ -45,7 +45,7 @@ export function AutomationInput({
 
   const containerStyle = isMini
     ? "relative flex items-center gap-2 transition-all duration-200"
-    : "relative bg-[#F8FAFC] rounded-xl p-4 border border-slate-100 focus-within:border-purple-200 focus-within:bg-white transition-all duration-200";
+    : "relative bg-[#F8FAFC] rounded-lg p-4 border border-slate-100 focus-within:border-purple-200 focus-within:bg-white transition-all duration-200";
 
   // Strip disallowed chars and enforce max length
   const sanitize = (val: string) => {

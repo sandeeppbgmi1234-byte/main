@@ -12,7 +12,7 @@ export default function CreditIndicator() {
   const { data, isLoading, error } = useFeatureGates();
 
   if (isLoading) {
-    return <Skeleton className="h-9 w-24 rounded-xl" />;
+    return <Skeleton className="h-9 w-24 rounded-lg" />;
   }
 
   if (error || !data) {

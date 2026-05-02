@@ -40,9 +40,9 @@ export default function EditFormPage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 h-full overflow-hidden rounded-xl">
+    <div className="flex flex-col flex-1 h-full overflow-hidden rounded-lg">
       {/* Canvas scrollable area */}
-      <div className="flex-1 overflow-y-auto rounded-xl -inner-sm">
+      <div className="flex-1 overflow-y-auto rounded-lg">
         <FormProvider {...methods}>
           <form
             onSubmit={handleCanvasSubmit}

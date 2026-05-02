@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import { executeWithErrorHandling } from "../repository-utils";
+import { ApiRouteError } from "@/server/middleware/errors/classes";
 import type { CreateFormInput, FormStatus } from "@dm-broo/common-types";
 import type { Form, FormSubmission } from "@prisma/client";
 
@@ -9,42 +10,86 @@ function generateSlug(): string {
 }
 
 // Creates a form scoped to a workspace. Retries up to 5 times on slug collision (P2002)
+// Enforces maxForms limit atomically within a transaction
 export async function createForm(
   userId: string,
   instaAccountId: string,
   data: CreateFormInput,
+  maxForms: number = -1,
 ): Promise<Form> {
-  let attempts = 0;
+  return await prisma.$transaction(async (tx) => {
+    // 1. ATOMIC LIMIT CHECK
+    if (maxForms !== -1) {
+      // Ensure quota record exists (idempotent migration for existing accounts)
+      const quota = await tx.formQuota.findUnique({
+        where: { instaAccountId },
+      });
 
-  while (attempts < 5) {
-    const slug = generateSlug();
+      if (!quota) {
+        const count = await tx.form.count({ where: { instaAccountId } });
+        await tx.formQuota.create({
+          data: { instaAccountId, count },
+        });
+      }
 
-    try {
-      return await prisma.form.create({
-        data: {
-          userId,
+      // Reserve one slot atomically
+      const result = await tx.formQuota.updateMany({
+        where: {
           instaAccountId,
-          name: data.name || data.title,
-          title: data.title,
-          description: data.description ?? "",
-          coverImage: data.coverImage ?? null,
-          fields: (data.fields ?? []) as any,
-          slug,
-          status: data.status ?? "DRAFT",
-          submitButtonLabel: data.submitButtonLabel ?? "Submit",
+          count: { lt: maxForms },
+        },
+        data: {
+          count: { increment: 1 },
         },
       });
-    } catch (error: any) {
-      // Retry only on unique constraint violation (slug collision)
-      if (error?.code === "P2002") {
-        attempts++;
-        continue;
-      }
-      throw error;
-    }
-  }
 
-  throw new Error("Failed to generate a unique slug after 5 attempts");
+      if (result.count === 0) {
+        throw new ApiRouteError(
+          `Free plan allows up to ${maxForms} forms. Upgrade to create more.`,
+          "FORM_LIMIT_REACHED",
+          403,
+        );
+      }
+    }
+
+    let attempts = 0;
+    while (attempts < 5) {
+      const slug = generateSlug();
+
+      try {
+        return await tx.form.create({
+          data: {
+            userId,
+            instaAccountId,
+            name: data.name || data.title,
+            title: data.title,
+            description: data.description ?? "",
+            coverImage: data.coverImage ?? null,
+            fields: (data.fields ?? []) as any,
+            slug,
+            status: data.status ?? "DRAFT",
+            submitButtonLabel: data.submitButtonLabel ?? "Submit",
+          },
+        });
+      } catch (error: any) {
+        // Retry only on unique constraint violation (slug collision)
+        if (error?.code === "P2002") {
+          attempts++;
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    throw new Error("Failed to generate a unique slug after 5 attempts");
+  });
+}
+
+// Returns total form count for a workspace — used for FREE plan cap enforcement
+export async function countFormsByInstaAccountId(
+  instaAccountId: string,
+): Promise<number> {
+  return prisma.form.count({ where: { instaAccountId } });
 }
 
 // All forms for a workspace, ordered newest first. Optionally filter by status.
@@ -121,11 +166,24 @@ export async function createFormSubmission(
 }
 
 // Hard deletes a form by id (submissions cascade via DB constraint)
+// Decrements FormQuota count atomically
 export async function deleteFormById(formId: string): Promise<void> {
-  await executeWithErrorHandling(
-    () => prisma.form.delete({ where: { id: formId } }),
-    { operation: "deleteFormById", model: "Form" },
-  );
+  await prisma.$transaction(async (tx) => {
+    const form = await tx.form.findUnique({
+      where: { id: formId },
+      select: { instaAccountId: true },
+    });
+
+    if (!form) return;
+
+    await tx.form.delete({ where: { id: formId } });
+
+    // Decrement quota if it exists
+    await tx.formQuota.updateMany({
+      where: { instaAccountId: form.instaAccountId, count: { gt: 0 } },
+      data: { count: { decrement: 1 } },
+    });
+  });
 }
 
 // All submissions for a form, newest first

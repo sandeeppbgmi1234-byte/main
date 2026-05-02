@@ -12,6 +12,7 @@ import {
 import { statsService } from "@/api/services/stats";
 import { statsKeys } from "@/keys/react-query";
 import { ChartDataPoint } from "@/api/services/stats/types";
+import { DashboardCard } from "./DashboardCard";
 
 // Internal configuration for different widget types
 const WIDGET_CONFIGS = {
@@ -70,60 +71,55 @@ export function GrowthWidget({
 
   if (chartData.length > 0) {
     const values = chartData.map((d: ChartDataPoint) => d.value);
-    const maxVal = Math.max(...values, 10); // Ensure some height even if all 0s
+    const maxVal = Math.max(...values, 10);
     const minVal = Math.min(...values);
 
-    // Add padding to top and bottom (20%)
     const paddingMultiplier = 0.2;
-    const rangeHeight = maxVal - minVal || maxVal; // Prevent division by zero
+    const rangeHeight = maxVal - minVal || maxVal;
     const paddedMax = maxVal + rangeHeight * paddingMultiplier;
     const paddedMin = Math.max(0, minVal - rangeHeight * paddingMultiplier);
     const paddedRange = paddedMax - paddedMin || 1;
 
-    // Map data points closely to SVG coords
     const stepX = width / Math.max(chartData.length - 1, 1);
 
     points = chartData
       .map((d: ChartDataPoint, i: number) => {
         const x = i * stepX;
-        // Invert Y axis for SVG (0 is top)
         const normalizedY = (d.value - paddedMin) / paddedRange;
         const y = height - normalizedY * height;
-        return `${x},${Math.max(0, Math.min(height, y))}`; // clamp to viewbox
+        return `${x},${Math.max(0, Math.min(height, y))}`;
       })
       .join(" ");
   }
 
-  return (
-    <div className="bg-white rounded-[32px] p-7 border border-gray-100 flex flex-col gap-2 min-h-[380px] w-full max-w-sm">
-      {/* Header section with title and range */}
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-[#1E293B] font-bold text-xl">{config.title}</h3>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1 text-[#475569] text-sm font-medium hover:bg-gray-50 px-2 py-1 rounded-lg transition-colors outline-none cursor-pointer">
-              {range}
-              <ChevronDown size={14} className="text-[#94A3B8]" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32 bg-white">
-            {options.map((opt) => (
-              <DropdownMenuItem
-                key={opt}
-                className="cursor-pointer"
-                onClick={() => setRange(opt)}
-              >
-                {opt}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+  const actions = (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="flex items-center gap-1 text-[#475569] text-sm font-medium hover:bg-gray-50 px-2 py-1 rounded-lg transition-colors outline-none cursor-pointer">
+          {range}
+          <ChevronDown size={14} className="text-[#94A3B8]" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-32 bg-white">
+        {options.map((opt) => (
+          <DropdownMenuItem
+            key={opt}
+            className="cursor-pointer"
+            onClick={() => setRange(opt)}
+          >
+            {opt}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
+  return (
+    <DashboardCard title={config.title} action={actions}>
       {/* Main metric display */}
       <div className="flex-1 flex flex-col items-center justify-center">
         {isLoading ? (
-          <div className="w-32 h-16 bg-muted animate-pulse rounded-xl" />
+          <div className="w-32 h-16 bg-muted animate-pulse rounded-lg" />
         ) : (
           <div className="flex items-center gap-3">
             <span className="text-[68px] font-bold text-[#7C3AED] leading-none tracking-tight">
@@ -152,14 +148,12 @@ export function GrowthWidget({
 
       {/* Sharp-edged graph implementation */}
       <div className="relative w-full h-[120px] mt-auto mb-6">
-        {/* Horizontal grid lines */}
         <div className="absolute inset-0 flex flex-col justify-between py-1">
           <div className="border-t border-purple-50 w-full" />
           <div className="border-t border-purple-50 w-full" />
           <div className="border-t border-purple-100 w-full" />
         </div>
 
-        {/* SVG Path for the line graph */}
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="overflow-visible w-full h-full relative z-10"
@@ -188,7 +182,6 @@ export function GrowthWidget({
           )}
         </svg>
 
-        {/* X-Axis labels */}
         <div className="absolute top-full left-0 right-0 flex justify-between mt-3 px-1 text-[#64748B] text-[11px] font-semibold">
           {chartData.length > 0 ? (
             <>
@@ -216,6 +209,6 @@ export function GrowthWidget({
           )}
         </div>
       </div>
-    </div>
+    </DashboardCard>
   );
 }

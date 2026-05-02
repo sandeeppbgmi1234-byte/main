@@ -10,6 +10,8 @@ import { cn } from "@/server/utils";
 import { CreditIndicator } from "@/app/dash/_components";
 import { RefreshInstaDialog } from "@/app/auth/_components/RefreshInstaDialog";
 
+import { NewFormButton } from "@/components/dash/forms/NewFormButton";
+
 export interface HeaderConfig {
   showSearch: boolean;
   childComp: React.ReactNode;
@@ -44,15 +46,7 @@ export const DASHBOARD_HEADER_CONFIG: Record<string, HeaderConfig> = {
     childComp: (
       <>
         <RefreshInstaDialog />
-        <Button className="bg-[#6A06E4] hover:bg-[#5a05c4] h-full" asChild>
-          <Link
-            href="/dash/forms/new"
-            className="h-full flex items-center gap-2"
-          >
-            <Image src={PlusIconSvg} alt="add" width={15} height={15} />
-            New Form
-          </Link>
-        </Button>
+        <NewFormButton />
       </>
     ),
   },

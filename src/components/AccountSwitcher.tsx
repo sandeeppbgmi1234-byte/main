@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { switchWorkspaceAction } from "@/server/workspace/actions";
 import { cn } from "@/server/utils";
@@ -29,16 +28,15 @@ const AccountSwitcher = ({
   currentAccount,
   allAccounts,
 }: AccountSwitcherProps) => {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const handleSwitch = (accountId: string) => {
+  const handleSwitch = async (accountId: string) => {
     if (accountId === currentAccount.id) return;
 
     startTransition(async () => {
       try {
         await switchWorkspaceAction(accountId);
-        router.refresh();
+        window.location.reload();
       } catch (error) {
         console.error("[AccountSwitcher] Failed to switch account:", error);
         toast.error("Failed to switch account. Please try again.");
@@ -76,7 +74,7 @@ const AccountSwitcher = ({
 
       <DropdownMenuContent
         align="center"
-        className="w-[220px] mt-2 p-2 rounded-xl bg-[#cccccc] border-none shadow-xl animate-in fade-in zoom-in-95 duration-200"
+        className="w-[220px] mt-2 p-2 rounded-lg bg-[#cccccc] border-none shadow-xl animate-in fade-in zoom-in-95 duration-200"
       >
         <div className="flex flex-col gap-2">
           {allAccounts.map((account) => {

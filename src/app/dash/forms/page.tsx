@@ -20,15 +20,18 @@ import {
 } from "../_components";
 import { FormStatusFilter } from "../_components/TableFilterMenu";
 import { SortField } from "../_components/TableHeader";
+import { useFeatureGates } from "@/hooks/use-feature-gates";
+import { cn } from "@/server/utils";
 
 export default function FormsPage() {
   const isMobile = useIsMobile();
+  const { data: gates } = useFeatureGates();
 
   const [statusFilter, setStatusFilter] = useState<FormStatusFilter>("ALL");
 
   const { sync: syncSearch, value: searchValue } = useSearchSync();
 
-  // query to fetch forms list
+  // query to fetch forms list (filtered by status)
   const { data: forms = [], isLoading } = useQuery({
     queryKey: formKeys.list(
       statusFilter !== "ALL" ? { status: statusFilter } : undefined,
@@ -40,6 +43,16 @@ export default function FormsPage() {
           : undefined,
       ),
   });
+
+  // separate query for total forms count (unfiltered) to enforce plan limits correctly
+  const { data: allForms = [] } = useQuery({
+    queryKey: formKeys.list(),
+    queryFn: () => formService.list(),
+  });
+
+  const maxForms = gates?.state.maxForms ?? -1;
+  const totalCount = allForms.length;
+  const isAtFormLimit = maxForms !== -1 && totalCount >= maxForms;
 
   const {
     search,
@@ -97,12 +110,24 @@ export default function FormsPage() {
         }
         actionButton={
           <Button
-            className="bg-[#6A06E4] hover:bg-[#5a05c4] w-full h-11 rounded-lg text-lg font-semibold"
-            asChild
+            className={cn(
+              "bg-[#6A06E4] hover:bg-[#5a05c4] w-full h-11 rounded-lg text-lg font-semibold",
+              isAtFormLimit && "opacity-70 cursor-not-allowed grayscale-[0.5]",
+            )}
+            asChild={!isAtFormLimit}
+            title={
+              isAtFormLimit
+                ? `Free plan allows up to ${maxForms} forms. Upgrade to create more.`
+                : undefined
+            }
           >
-            <Link href="/dash/forms/new" className="flex items-center gap-2">
-              New Form
-            </Link>
+            {isAtFormLimit ? (
+              <span className="flex items-center gap-2">New Form</span>
+            ) : (
+              <Link href="/dash/forms/new" className="flex items-center gap-2">
+                New Form
+              </Link>
+            )}
           </Button>
         }
         searchValue={searchValue}

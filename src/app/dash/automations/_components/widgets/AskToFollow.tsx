@@ -60,7 +60,7 @@ const AskToFollow = ({
             />
 
             {/* Static visit profile indicator */}
-            <div className="flex items-center justify-between bg-[#F5F3FF] rounded-xl px-4 py-3 border border-purple-50 group transition-all hover:bg-[#EDE9FE]">
+            <div className="flex items-center justify-between bg-[#F5F3FF] rounded-lg px-4 py-3 border border-purple-50 group transition-all hover:bg-[#EDE9FE]">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-[#6A06E4]">
                   <LinkIcon size={16} />

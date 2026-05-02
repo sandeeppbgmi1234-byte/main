@@ -38,7 +38,7 @@ const PublicReplyToComments = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-purple-300 w-full overflow-hidden">
+    <div className="bg-white rounded-lg border border-purple-300 w-full overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3.5">
         <span className="text-sm font-semibold text-slate-800">
           Public Reply to Comment

@@ -176,7 +176,7 @@ const SendDm = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-purple-300 w-full overflow-hidden">
+    <div className="bg-white rounded-lg border border-purple-300 w-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3.5">
         <span className="text-sm font-semibold text-slate-800">Send a DM</span>
@@ -256,7 +256,7 @@ const SendDm = ({
                   key={index}
                   className="flex items-center gap-3 bg-[#F8F9FA] px-4 py-3 rounded-2xl border border-slate-100 group hover:border-purple-200 hover:bg-white transition-all active:scale-[0.99]"
                 >
-                  <div className="bg-purple-100 p-2 rounded-xl text-purple-600">
+                  <div className="bg-purple-100 p-2 rounded-lg text-purple-600">
                     <LinkIcon size={16} />
                   </div>
                   <span className="flex-1 text-sm font-semibold text-slate-700 truncate">
@@ -306,7 +306,7 @@ const SendDm = ({
               </DialogHeader>
 
               <div className="space-y-3 sm:space-y-4 pt-2">
-                <div className="rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 bg-slate-50/50">
+                <div className="rounded-lg sm:rounded-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 bg-slate-50/50">
                   {/* Title Row */}
                   <div className="flex items-start sm:items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 bg-white group transition-colors hover:bg-slate-50">
                     <div className="text-slate-400 group-hover:text-purple-500 transition-colors mt-0.5 sm:mt-0 shrink-0">
@@ -353,7 +353,7 @@ const SendDm = ({
                     editingIndex === null &&
                     links.length >= SEND_DM_CONFIG.MAX_LINKS
                   }
-                  className="w-full bg-[#6A06E4] hover:bg-[#5805BD] text-white rounded-xl py-5 sm:py-6 font-bold text-sm sm:text-base transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#6A06E4] hover:bg-[#5805BD] text-white rounded-lg py-5 sm:py-6 font-bold text-sm sm:text-base transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {editingIndex !== null ? "Update Link" : "Add Link"}
                 </Button>

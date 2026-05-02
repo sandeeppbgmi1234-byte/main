@@ -252,7 +252,7 @@ const FileUploadField = ({
       </label>
 
       {fileUrl ? (
-        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in zoom-in duration-300">
+        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-lg animate-in fade-in zoom-in duration-300">
           <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
             <FileCheck size={20} />
           </div>
@@ -283,7 +283,7 @@ const FileUploadField = ({
           </div>
         </div>
       ) : isUploading ? (
-        <div className="flex flex-col items-center justify-center gap-3 border-slate-200 border-2 border-dashed bg-slate-50/50 rounded-xl py-10 animate-pulse">
+        <div className="flex flex-col items-center justify-center gap-3 border-slate-200 border-2 border-dashed bg-slate-50/50 rounded-lg py-10 animate-pulse">
           <Loader2 size={32} className="text-[#6A06E4] animate-spin" />
           <p className="text-sm font-medium text-[#6A06E4]">Loading...</p>
         </div>
@@ -292,7 +292,7 @@ const FileUploadField = ({
           onClick={() => fileInputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
-          className="group relative flex flex-col items-center justify-center gap-2 border-slate-200 border-2 border-dashed bg-slate-50/50 hover:bg-slate-50 hover:border-[#6A06E4]/30 transition-all duration-200 rounded-xl py-10 cursor-pointer"
+          className="group relative flex flex-col items-center justify-center gap-2 border-slate-200 border-2 border-dashed bg-slate-50/50 hover:bg-slate-50 hover:border-[#6A06E4]/30 transition-all duration-200 rounded-lg py-10 cursor-pointer"
         >
           <div className="p-3 rounded-full bg-white shadow-sm group-hover:scale-110 transition-transform duration-200">
             <UploadCloud

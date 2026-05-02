@@ -26,7 +26,7 @@ const OpeningMessage = ({
   const [isEditable, setIsEditable] = useState(false);
 
   return (
-    <div className="bg-white rounded-xl border border-purple-300 w-full overflow-hidden">
+    <div className="bg-white rounded-lg border border-purple-300 w-full overflow-hidden">
       {/* Header with toggle */}
       <div className="flex items-center justify-between px-4 py-3.5">
         <span className="text-sm font-bold text-slate-800">
@@ -52,7 +52,7 @@ const OpeningMessage = ({
           />
 
           {/* Button text preview/edit */}
-          <div className="bg-[#F6EFFF] rounded-xl flex items-center justify-between border border-purple-100 group">
+          <div className="bg-[#F6EFFF] rounded-lg flex items-center justify-between border border-purple-100 group">
             <div className="flex-1 flex items-center gap-2">
               <AutomationInput
                 variant="mini"

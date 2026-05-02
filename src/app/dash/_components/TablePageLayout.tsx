@@ -61,7 +61,7 @@ export default function TablePageLayout<T extends { id: string }>(
 ) {
   return (
     <div className="flex flex-col flex-1 gap-4 overflow-hidden">
-      <div className="bg-white rounded-xl overflow-hidden flex-1 border border-slate-50 flex flex-col shadow-sm">
+      <div className="bg-white rounded-lg overflow-hidden flex-1 border border-slate-50 flex flex-col shadow-sm">
         {/* Unified Header */}
         {props.variant === "automations" ? (
           <TableHeader

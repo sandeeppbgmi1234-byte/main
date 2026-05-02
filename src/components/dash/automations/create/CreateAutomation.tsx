@@ -89,23 +89,25 @@ export default function CreateAutomationDialog({ title }: { title: string }) {
     isPending && !data && "opacity-70 cursor-wait",
   );
 
-  if (!hasAutomations) {
+  // Primary state: show the creation modal if automations exist or during initial load
+  if (hasAutomations || isPending) {
     return (
-      <Link href="/dash/automations/new" className="contents">
+      <CreateAutomationModal>
         <Button className={buttonClass} disabled={isPending && !data}>
           <Image src={PlusIconSvg} alt="add" width={15} height={15} />
-          Create your first automation
+          {title}
         </Button>
-      </Link>
+      </CreateAutomationModal>
     );
   }
 
+  // Fallback state: show the onboarding button only when we're sure no automations exist
   return (
-    <CreateAutomationModal>
-      <Button className={buttonClass} disabled={isPending && !data}>
+    <Link href="/dash/automations/new" className="contents">
+      <Button className={buttonClass}>
         <Image src={PlusIconSvg} alt="add" width={15} height={15} />
-        {title}
+        Create your first automation
       </Button>
-    </CreateAutomationModal>
+    </Link>
   );
 }

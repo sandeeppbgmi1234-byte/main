@@ -32,74 +32,54 @@ export function BillingCard({ plan, isCurrent }: BillingCardProps) {
     };
   }, []);
 
-  const handleCheckout = async () => {
-    if (isCurrent || isCreatingCheckoutRef.current) return;
+  async function handleCheckout() {
+    if (isCreatingCheckoutRef.current) return;
 
-    isCreatingCheckoutRef.current = true;
     setLoading(true);
+    isCreatingCheckoutRef.current = true;
+
     try {
-      const data = await billingService.checkout(plan.id);
+      const { checkoutUrl } = await billingService.checkout(plan.id);
 
-      if (data.checkoutUrl) {
-        const width = 600;
-        const height = 800;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
-        const popup = window.open(
-          data.checkoutUrl,
-          "Checkout",
-          `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no,noopener,noreferrer`,
-        );
-
-        // Fallback if popup was blocked
-        if (!popup) {
-          window.location.assign(data.checkoutUrl);
-          return;
-        }
-
-        // Poll for subscription status change to avoid race conditions with webhook
-        const startTime = Date.now();
-        const MAX_POLL_TIME = 120000; // 2 minutes
-        pollTimerRef.current = setInterval(async () => {
-          try {
-            const gateData = await billingService.getFeatureGates();
-
-            // Success: Webhook processed and plan updated
-            if (gateData?.state?.currentPlan === plan.id) {
-              if (pollTimerRef.current) clearInterval(pollTimerRef.current);
-              pollTimerRef.current = null;
-              setLoading(false);
-              isCreatingCheckoutRef.current = false;
-              window.location.reload();
-              return;
-            }
-          } catch (e) {
-            console.error("[Polling] Error checking status:", e);
-          }
-
-          const elapsed = Date.now() - startTime;
-          // If popup is closed and we've waited at least 15s for the webhook to land
-          if ((popup.closed && elapsed > 15000) || elapsed > MAX_POLL_TIME) {
-            if (pollTimerRef.current) clearInterval(pollTimerRef.current);
-            pollTimerRef.current = null;
-            setLoading(false);
-            isCreatingCheckoutRef.current = false;
-            window.location.reload();
-          }
-        }, 2000);
-      } else {
-        console.error("[Checkout] Response missing checkoutUrl:", data);
-        throw new Error("Unable to start checkout. Please try again.");
+      if (!checkoutUrl) {
+        throw new Error("No checkout URL returned from server.");
       }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "An unexpected error occurred";
-      toast.error(message);
+
+      // Calculate popup position to center it
+      const width = 600;
+      const height = 800;
+      const left = window.screenX + (window.outerWidth - width) / 2;
+      const top = window.screenY + (window.outerHeight - height) / 2;
+
+      const checkoutWindow = window.open(
+        checkoutUrl,
+        "DM_Broo_Checkout",
+        `width=${width},height=${height},left=${left},top=${top},status=no,menubar=no,toolbar=no`,
+      );
+
+      if (!checkoutWindow) {
+        throw new Error("Popup blocked. Please allow popups for this site.");
+      }
+
+      // Start polling to detect when the window is closed
+      if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+
+      pollTimerRef.current = setInterval(() => {
+        if (checkoutWindow.closed) {
+          if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+          window.location.reload();
+        }
+      }, 1000);
+    } catch (error: any) {
+      console.error("[CHECKOUT_ERROR]", error);
+      toast.error(
+        error.message || "Failed to initiate checkout. Please try again.",
+      );
+
       setLoading(false);
       isCreatingCheckoutRef.current = false;
     }
-  };
+  }
 
   return (
     <div

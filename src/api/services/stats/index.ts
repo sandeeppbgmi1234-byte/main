@@ -6,30 +6,39 @@ import {
 } from "@/api/services/stats/types";
 
 export const statsService = {
+  /**
+   * Fetches total outreach executions and daily breakdown
+   */
   getOutreachImpact: async (range: string): Promise<OutreachImpactResponse> => {
-    const envelope = await request(
+    const res = await request(
       api.get<ApiResponse<OutreachImpactResponse>>(
         `/stats/outreach-impact?range=${encodeURIComponent(range)}`,
       ),
     );
-    return envelope.result;
+    return res.result;
   },
 
+  /**
+   * Fetches attributed followers gained via automations and daily net growth trend
+   */
   getFollowerGrowth: async (range: string): Promise<FollowerGrowthResponse> => {
-    const envelope = await request(
+    const res = await request(
       api.get<ApiResponse<FollowerGrowthResponse>>(
         `/stats/followers-growth?range=${encodeURIComponent(range)}`,
       ),
     );
-    return envelope.result;
+    return res.result;
   },
 
+  /**
+   * Fetches the best performing posts and optimal posting times
+   */
   getBestPerformerStats: async (range: string): Promise<any> => {
-    const envelope = await request(
+    const res = await request(
       api.get<ApiResponse<any>>(
         `/stats/best-performer?range=${encodeURIComponent(range)}`,
       ),
     );
-    return envelope.result;
+    return res.result;
   },
 };

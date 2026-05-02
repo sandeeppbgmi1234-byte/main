@@ -56,7 +56,7 @@ export default function FieldCard({
       )}
 
       {/* FIELD CONTAINER */}
-      <div className="flex-1 bg-white rounded-xl border border-slate-100 px-4 py-3 space-y-3 hover:border-[#6A06E4]/20 transition-colors">
+      <div className="flex-1 bg-white rounded-lg border border-slate-100 px-4 py-3 space-y-3 hover:border-[#6A06E4]/20 transition-colors">
         {/* HEADER SECTION: Displays field type, Required toggle and Delete button */}
         <div className="flex items-center justify-between border-b border-slate-50 pb-2">
           <span className="text-[16px] font-bold text-[#6A06E4] uppercase tracking-wider">

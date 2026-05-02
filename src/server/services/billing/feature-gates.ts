@@ -64,6 +64,7 @@ export async function getFeatureGates(
       creditsUsed,
       creditLimit,
       subStatus,
+      maxForms: plan.maxForms,
     },
     access: {
       canAddAccount: activeAccountCount < maxAccounts && subStatus === "ACTIVE",

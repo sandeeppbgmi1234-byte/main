@@ -40,7 +40,7 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] flex justify-center items-center p-4">
-      <div className="w-[95%] lg:w-1/3 mx-auto space-y-8 bg-white p-6 rounded-xl">
+      <div className="w-[95%] lg:w-1/3 mx-auto space-y-8 bg-white p-6 rounded-lg">
         {form.coverImage && (
           <img
             src={form.coverImage}

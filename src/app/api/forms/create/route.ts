@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     // CHECK FEATURE GATE
-    const { access } = await getFeatureGates(clerkId!);
+    const { access, state } = await getFeatureGates(clerkId!);
     if (!access.canCreateForms) {
       throw new ApiRouteError(
         "Your current plan does not allow lead generation forms. Please upgrade.",
@@ -38,6 +38,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return createForm(clerkId!, instaAccountId!, validation.data);
+    return createForm(
+      clerkId!,
+      instaAccountId!,
+      validation.data,
+      state.maxForms,
+    );
   });
 }

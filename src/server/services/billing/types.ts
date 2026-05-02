@@ -11,6 +11,7 @@ export type FeatureGates = {
     creditsUsed: number;
     creditLimit: number;
     subStatus: SubscriptionStatus;
+    maxForms: number;
   };
   access: {
     canAddAccount: boolean;

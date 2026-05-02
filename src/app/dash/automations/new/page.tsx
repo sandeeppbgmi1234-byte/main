@@ -74,7 +74,7 @@ const NewAutomationMobile = () => {
         <MobileDashboardHeader title="Automations" showSearch={false} />
       </div>
       {/* Main card */}
-      <div className="flex-1 bg-white rounded-xl overflow-hidden relative flex flex-col items-center mx-4 mt-2">
+      <div className="flex-1 bg-white rounded-lg overflow-hidden relative flex flex-col items-center mx-4 mt-2">
         {/* Layer 1: Background Gradient — deep purple fading to white */}
         <div
           className="absolute inset-x-0 top-0"

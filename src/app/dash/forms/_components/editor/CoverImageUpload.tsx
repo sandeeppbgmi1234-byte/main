@@ -114,7 +114,7 @@ const CoverImageArea = ({ value, onChange }: CoverImageAreaProps) => {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`relative w-[90%] h-40 rounded-xl overflow-hidden bg-slate-200 group transition-all duration-200 ${
+      className={`relative w-[90%] h-40 rounded-lg overflow-hidden bg-slate-200 group transition-all duration-200 ${
         isDragging
           ? "ring-2 ring-[#6A06E4] ring-offset-2 scale-[0.99] bg-slate-300"
           : ""
