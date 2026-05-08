@@ -77,6 +77,10 @@ const SubscriptionEntitySchema = z.object({
 
 export const WebhookPayloadSchema = z.discriminatedUnion("event", [
   BaseWebhookSchema.extend({
+    event: z.literal("payment.authorized"),
+    payload: z.object({ payment: z.object({ entity: PaymentEntitySchema }) }),
+  }),
+  BaseWebhookSchema.extend({
     event: z.literal("payment.captured"),
     payload: PaymentCapturedSchema,
   }),
@@ -89,6 +93,20 @@ export const WebhookPayloadSchema = z.discriminatedUnion("event", [
     payload: OrderPaidSchema,
   }),
   // --- Subscription events ---
+  BaseWebhookSchema.extend({
+    event: z.literal("subscription.authenticated"),
+    payload: z.object({
+      subscription: z.object({
+        entity: z.object({
+          id: z.string(),
+          plan_id: z.string(),
+          status: z.string(),
+          notes: z.record(z.string(), z.string()).optional(),
+        }),
+      }),
+      payment: z.object({ entity: PaymentEntitySchema }).optional(),
+    }),
+  }),
   BaseWebhookSchema.extend({
     event: z.literal("subscription.activated"),
     payload: z.object({
@@ -128,21 +146,28 @@ export const WebhookPayloadSchema = z.discriminatedUnion("event", [
       }),
     }),
   }),
-
   BaseWebhookSchema.extend({
-    event: z.literal("subscription.halted"),
+    event: z.literal("subscription.updated"),
     payload: z.object({
-      subscription: z.object({ entity: SubscriptionEntitySchema }),
+      subscription: z.object({
+        entity: z.object({
+          id: z.string(),
+          plan_id: z.string(),
+          status: z.string(),
+          notes: z.record(z.string(), z.string()).optional(),
+        }),
+      }),
     }),
   }),
   BaseWebhookSchema.extend({
-    event: z.literal("subscription.cancelled"),
-    payload: z.object({
-      subscription: z.object({ entity: SubscriptionEntitySchema }),
-    }),
-  }),
-  BaseWebhookSchema.extend({
-    event: z.literal("subscription.completed"),
+    event: z.enum([
+      "subscription.pending",
+      "subscription.halted",
+      "subscription.cancelled",
+      "subscription.completed",
+      "subscription.paused",
+      "subscription.resumed",
+    ]),
     payload: z.object({
       subscription: z.object({ entity: SubscriptionEntitySchema }),
     }),

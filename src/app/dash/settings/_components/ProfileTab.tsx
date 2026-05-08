@@ -61,49 +61,72 @@ export function ProfileTab({ data }: ProfileTabProps) {
         </div>
 
         <div className="flex flex-col gap-4">
-          {data.accounts.map((account) => (
-            <div key={account.id} className="space-y-2">
-              <div className="bg-[#F9FAFB] rounded-sm p-3 flex items-center justify-between border border-[#F3F4F6]">
-                <span className="text-sm font-medium text-[#111827]">
-                  @{account.username}
-                </span>
-                {/* Remove button ignored as per request */}
-              </div>
-              <p className="text-[#9CA3AF] text-xs font-normal px-2">
-                User Since: {formatDate(account.connectedAt)}
-              </p>
-            </div>
-          ))}
+          {data.accounts.map((account) => {
+            const isDisabledSecondary =
+              !account.isActive && account.accountRole === "SECONDARY";
 
-          {/* Action Button */}
-          {!isBlackTier ? (
-            <UpgradeTooltip>
-              <Link
-                href="/dash/billing"
-                className="w-full bg-[#6A06E4] hover:bg-[#5B05C2] text-white p-3 rounded-sm flex items-center justify-center gap-2 font-semibold text-sm transition-all active:scale-[0.98] mt-2"
-              >
-                Add New Account
-                <Image src={CrownIcon} width={20} height={20} alt="" />
-              </Link>
-            </UpgradeTooltip>
-          ) : canAddAccount ? (
+            return (
+              <div key={account.id} className="space-y-2 relative">
+                <div
+                  className={`bg-[#F9FAFB] rounded-sm p-3 flex items-center justify-between border ${isDisabledSecondary ? "border-red-200" : "border-[#F3F4F6]"}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-[#111827]">
+                      @{account.username}
+                    </span>
+                    {isDisabledSecondary && (
+                      <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">
+                        LOCKED
+                      </span>
+                    )}
+                  </div>
+                  {isDisabledSecondary && (
+                    <Link
+                      href="/dash/billing"
+                      className="text-xs bg-[#6A06E4] hover:bg-[#5B05C2] text-white px-3 py-1.5 rounded-sm font-medium transition-colors z-10"
+                    >
+                      Upgrade to unlock
+                    </Link>
+                  )}
+                </div>
+                <p className="text-[#9CA3AF] text-xs font-normal px-2">
+                  User Since: {formatDate(account.connectedAt)}
+                </p>
+                {isDisabledSecondary && (
+                  <div className="absolute inset-0 bg-white/40 pointer-events-none" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {/* Action Button */}
+        {!isBlackTier ? (
+          <UpgradeTooltip>
             <Link
-              href={
-                accountsCount > 0 ? "/auth/connect/workspace" : "/auth/connect"
-              }
-              className="w-full py-3 bg-[#6A06E4] hover:bg-[#5B05C2] text-white rounded-sm flex items-center justify-center gap-2 font-bold text-[16px] transition-all active:scale-[0.98] mt-2"
+              href="/dash/billing"
+              className="w-full bg-[#6A06E4] hover:bg-[#5B05C2] text-white p-3 rounded-sm flex items-center justify-center gap-2 font-semibold text-sm transition-all active:scale-[0.98] mt-2"
             >
               Add New Account
+              <Image src={CrownIcon} width={20} height={20} alt="" />
             </Link>
-          ) : (
-            <button
-              disabled
-              className="w-full h-[54px] bg-[#F3F4F6] text-[#9CA3AF] rounded-sm flex items-center justify-center gap-2 font-bold text-[16px] transition-all cursor-not-allowed mt-2"
-            >
-              Account Limit Reached
-            </button>
-          )}
-        </div>
+          </UpgradeTooltip>
+        ) : canAddAccount ? (
+          <Link
+            href={
+              accountsCount > 0 ? "/auth/connect/workspace" : "/auth/connect"
+            }
+            className="w-full py-3 bg-[#6A06E4] hover:bg-[#5B05C2] text-white rounded-sm flex items-center justify-center gap-2 font-bold text-[16px] transition-all active:scale-[0.98] mt-2"
+          >
+            Add New Account
+          </Link>
+        ) : (
+          <button
+            disabled
+            className="w-full h-[54px] bg-[#F3F4F6] text-[#9CA3AF] rounded-sm flex items-center justify-center gap-2 font-bold text-[16px] transition-all cursor-not-allowed mt-2"
+          >
+            Account Limit Reached
+          </button>
+        )}
       </div>
     </div>
   );

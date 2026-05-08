@@ -55,9 +55,11 @@ model InstaAccount {
   lastSyncedAt           DateTime                @default(now())
   webhooksEnabled        Boolean                 @default(false)
   isActive               Boolean                 @default(true)
+  accountRole            InstaAccountRole        @default(PRIMARY)
   instaFollowerSnapshots InstaFollowerSnapshot[]
   automations            Automation[]
   forms                  Form[]
+  formQuota              FormQuota?
 
   @@index([userId])
   @@map("instagram_accounts")
@@ -254,6 +256,16 @@ model FormSubmission {
   @@map("form_submissions")
 }
 
+model FormQuota {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  instaAccountId String       @unique @db.ObjectId
+  instaAccount   InstaAccount @relation(fields: [instaAccountId], references: [id], onDelete: Cascade)
+
+  count Int @default(0)
+
+  @@map("form_quotas")
+}
+
 type DmLink {
   title String
   url   String
@@ -352,6 +364,7 @@ enum AutomationStatus {
   ACTIVE
   STOPPED
   EXPIRED
+  PLAN_PAUSED
 }
 
 enum ExecutionStatus {
@@ -395,4 +408,9 @@ enum InstaAccountType {
   MEDIA_CREATOR
   CREATOR
   PERSONAL
+}
+
+enum InstaAccountRole {
+  PRIMARY
+  SECONDARY
 }

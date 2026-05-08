@@ -18,6 +18,7 @@ export interface ConnectedAccount {
   tokenExpiresAt: Date | string;
   connectedAt: Date | string;
   isActive: boolean;
+  accountRole: "PRIMARY" | "SECONDARY";
 }
 
 export interface Invoice {

@@ -20,11 +20,30 @@ export async function createForm(
   return await prisma.$transaction(async (tx) => {
     // 1. ATOMIC LIMIT CHECK
     if (maxForms !== -1) {
-      const currentCount = await tx.form.count({
+      // Ensure quota record exists (idempotent migration for existing accounts)
+      const quota = await tx.formQuota.findUnique({
         where: { instaAccountId },
       });
 
-      if (currentCount >= maxForms) {
+      if (!quota) {
+        const count = await tx.form.count({ where: { instaAccountId } });
+        await tx.formQuota.create({
+          data: { instaAccountId, count },
+        });
+      }
+
+      // Reserve one slot atomically
+      const result = await tx.formQuota.updateMany({
+        where: {
+          instaAccountId,
+          count: { lt: maxForms },
+        },
+        data: {
+          count: { increment: 1 },
+        },
+      });
+
+      if (result.count === 0) {
         throw new ApiRouteError(
           `Free plan allows up to ${maxForms} forms. Upgrade to create more.`,
           "FORM_LIMIT_REACHED",
@@ -147,11 +166,24 @@ export async function createFormSubmission(
 }
 
 // Hard deletes a form by id (submissions cascade via DB constraint)
+// Decrements FormQuota count atomically
 export async function deleteFormById(formId: string): Promise<void> {
-  await executeWithErrorHandling(
-    () => prisma.form.delete({ where: { id: formId } }),
-    { operation: "deleteFormById", model: "Form" },
-  );
+  await prisma.$transaction(async (tx) => {
+    const form = await tx.form.findUnique({
+      where: { id: formId },
+      select: { instaAccountId: true },
+    });
+
+    if (!form) return;
+
+    await tx.form.delete({ where: { id: formId } });
+
+    // Decrement quota if it exists
+    await tx.formQuota.updateMany({
+      where: { instaAccountId: form.instaAccountId, count: { gt: 0 } },
+      data: { count: { decrement: 1 } },
+    });
+  });
 }
 
 // All submissions for a form, newest first

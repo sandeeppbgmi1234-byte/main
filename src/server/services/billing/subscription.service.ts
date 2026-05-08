@@ -1,5 +1,5 @@
 import { prisma } from "@/server/db";
-import { PLANS, type PlanId } from "@/configs/plans.config";
+import { PLANS, type PlanId, getEffectiveMaxAccounts } from "@/configs/plans.config";
 import { syncCreditStateToRedis } from "@/server/redis/operations/billing";
 
 import { logger } from "@/server/utils/pino";
@@ -47,6 +47,9 @@ export async function activateSubscription(
   const periodStart = new Date();
   const periodEnd = getPeriodEnd(periodStart);
 
+  // Enforce account/feature constraints immediately
+  const constraintOps = await getPlanConstraintOps(userId, planId);
+
   // Upsert Subscription and CreditLedger in a transaction
   await prisma.$transaction([
     prisma.subscription.upsert({
@@ -87,6 +90,7 @@ export async function activateSubscription(
         quotaEmailSentAt: null,
       },
     }),
+    ...constraintOps,
   ]);
 
   // Sync fresh state to Redis immediately
@@ -139,6 +143,9 @@ export async function renewSubscription(
   const periodStart = new Date();
   const periodEnd = getPeriodEnd(periodStart);
 
+  // Check for plan changes during renewal
+  const constraintOps = await getPlanConstraintOps(userId, planId);
+
   const operations: Prisma.PrismaPromise<unknown>[] = [
     prisma.subscription.update({
       where: { userId },
@@ -161,6 +168,7 @@ export async function renewSubscription(
         quotaEmailSentAt: null,
       },
     }),
+    ...constraintOps,
   ];
 
   if (paymentData) {
@@ -222,7 +230,7 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
   const userId = await resolveInternalUserId(clerkUserId);
   const freePlan = PLANS.FREE;
 
-  const [_, ledger] = await prisma.$transaction([
+  const ops: Prisma.PrismaPromise<any>[] = [
     prisma.subscription.update({
       where: { userId },
       data: { status: "EXPIRED" },
@@ -233,7 +241,37 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
         creditLimit: freePlan.creditLimit,
       },
     }),
-  ]);
+    prisma.instaAccount.updateMany({
+      where: { userId, accountRole: "SECONDARY" },
+      data: { isActive: false },
+    }),
+    prisma.automation.updateMany({
+      where: {
+        instaAccount: { userId, accountRole: "SECONDARY" },
+      },
+      data: { status: "PLAN_PAUSED" },
+    }),
+    prisma.form.updateMany({
+      where: {
+        instaAccount: { userId, accountRole: "SECONDARY" },
+      },
+      data: { status: "DRAFT" },
+    }),
+  ];
+
+  if (!freePlan.hasAskToFollow) {
+    ops.push(
+      prisma.automation.updateMany({
+        where: {
+          user: { id: userId },
+          askToFollowEnabled: true,
+        },
+        data: { askToFollowEnabled: false },
+      })
+    );
+  }
+
+  const [_, ledger] = await prisma.$transaction(ops);
 
   await syncCreditStateToRedis(
     clerkUserId,
@@ -241,6 +279,13 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
     freePlan.creditLimit,
     "EXPIRED",
   );
+
+  try {
+    const { notificationsQueue } = await import("@/server/redis/queues");
+    await notificationsQueue.add("plan-expired", { type: "PLAN_EXPIRED", userId: clerkUserId });
+  } catch (err) {
+    logger.error({ clerkUserId, err }, "Failed to enqueue plan-expired notification");
+  }
 
   logger.info(
     { clerkUserId },
@@ -258,10 +303,9 @@ export async function changePlan(
   razorpaySubscriptionId: string | null = null,
   razorpayPlanId: string | null = null,
 ): Promise<void> {
-  const userId = await resolveInternalUserId(clerkUserId);
-  const newPlan = PLANS[newPlanId];
+  const constraintOps = await getPlanConstraintOps(userId, newPlanId);
 
-  const [ledger] = await prisma.$transaction([
+  const ops: Prisma.PrismaPromise<any>[] = [
     prisma.creditLedger.update({
       where: { userId },
       data: { creditLimit: newPlan.creditLimit },
@@ -275,7 +319,10 @@ export async function changePlan(
         razorpayPlanId,
       },
     }),
-  ]);
+    ...constraintOps,
+  ];
+
+  const [ledger] = await prisma.$transaction(ops);
 
   await syncCreditStateToRedis(
     clerkUserId,
@@ -384,4 +431,74 @@ export async function getUserBillingData(clerkUserId: string) {
       };
     }),
   };
+}
+/**
+ * Internal helper to generate Prisma operations for plan constraints.
+ * Handles account deactivation, automation pausing, and form stopping.
+ */
+async function getPlanConstraintOps(userId: string, newPlanId: PlanId) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      createdAt: true,
+      subscription: { select: { plan: true } },
+    },
+  });
+
+  const currentPlanId = user?.subscription?.plan as PlanId | undefined;
+  const currentPlan = currentPlanId ? PLANS[currentPlanId] : PLANS.FREE;
+
+  const maxAllowed = getEffectiveMaxAccounts(
+    user?.createdAt || new Date(),
+    newPlanId,
+  );
+  const isDowngradingAccounts = maxAllowed === 1 && currentPlan.maxAccounts > 1;
+
+  const ops: Prisma.PrismaPromise<any>[] = [];
+
+  if (isDowngradingAccounts) {
+    // Downgrading to single-account plan: Deactivate SECONDARY accounts and stop their content
+    ops.push(
+      prisma.instaAccount.updateMany({
+        where: { userId, accountRole: "SECONDARY" },
+        data: { isActive: false },
+      }),
+      prisma.automation.updateMany({
+        where: { instaAccount: { userId, accountRole: "SECONDARY" } },
+        data: { status: "PLAN_PAUSED" },
+      }),
+      prisma.form.updateMany({
+        where: { instaAccount: { userId, accountRole: "SECONDARY" } },
+        data: { status: "DRAFT" },
+      }),
+    );
+  } else if (newPlanId === "BLACK") {
+    // Upgrading to multi-account plan: Reactivate SECONDARY accounts
+    ops.push(
+      prisma.instaAccount.updateMany({
+        where: { userId, accountRole: "SECONDARY" },
+        data: { isActive: true },
+      }),
+      prisma.automation.updateMany({
+        where: {
+          instaAccount: { userId, accountRole: "SECONDARY" },
+          status: "PLAN_PAUSED",
+        },
+        data: { status: "ACTIVE" },
+      }),
+      // Note: We don't auto-publish forms as they might have been drafts by choice
+    );
+  }
+
+  // Handle feature gates (e.g. Ask to Follow)
+  if (!PLANS[newPlanId].hasAskToFollow) {
+    ops.push(
+      prisma.automation.updateMany({
+        where: { user: { id: userId }, askToFollowEnabled: true },
+        data: { askToFollowEnabled: false },
+      }),
+    );
+  }
+
+  return ops;
 }

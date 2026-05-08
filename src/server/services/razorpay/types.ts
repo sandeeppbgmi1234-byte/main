@@ -26,6 +26,10 @@ export interface PaymentVerificationResult {
 }
 
 // Narrowed webhook event types
+export type PaymentAuthorizedEvent = Extract<
+  WebhookPayload,
+  { event: "payment.authorized" }
+>;
 export type PaymentCapturedEvent = Extract<
   WebhookPayload,
   { event: "payment.captured" }
@@ -36,6 +40,10 @@ export type PaymentFailedEvent = Extract<
 >;
 export type OrderPaidEvent = Extract<WebhookPayload, { event: "order.paid" }>;
 
+export type SubscriptionAuthenticatedEvent = Extract<
+  WebhookPayload,
+  { event: "subscription.authenticated" }
+>;
 export type SubscriptionActivatedEvent = Extract<
   WebhookPayload,
   { event: "subscription.activated" }
@@ -44,15 +52,19 @@ export type SubscriptionChargedEvent = Extract<
   WebhookPayload,
   { event: "subscription.charged" }
 >;
-export type SubscriptionHaltedEvent = Extract<
+export type SubscriptionUpdatedEvent = Extract<
   WebhookPayload,
-  { event: "subscription.halted" }
+  { event: "subscription.updated" }
 >;
-export type SubscriptionCancelledEvent = Extract<
+export type SubscriptionStatusChangeEvent = Extract<
   WebhookPayload,
-  { event: "subscription.cancelled" }
->;
-export type SubscriptionCompletedEvent = Extract<
-  WebhookPayload,
-  { event: "subscription.completed" }
+  {
+    event:
+      | "subscription.pending"
+      | "subscription.halted"
+      | "subscription.cancelled"
+      | "subscription.completed"
+      | "subscription.paused"
+      | "subscription.resumed";
+  }
 >;
