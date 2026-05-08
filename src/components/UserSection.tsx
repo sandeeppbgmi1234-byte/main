@@ -44,19 +44,18 @@ const UserSection = async () => {
       allAccounts = await prisma.instaAccount.findMany({
         where: {
           userId: user.id,
-          isActive: true,
         },
         select: {
           id: true,
           username: true,
           profilePictureUrl: true,
+          isActive: true,
         },
       });
 
       account = allAccounts.find((a) => a.id === activeIgId) || allAccounts[0];
     }
   } catch (error) {
-    console.error("[UserSection] Database fetch failed:", error);
     account = null;
   }
 

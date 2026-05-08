@@ -201,6 +201,12 @@ export async function handleOAuthCallback(code: string, state: string) {
             where: { userId: user.id, isActive: true },
           });
 
+          // Count total connections to determine role
+          const totalAccountCount = await tx.instaAccount.count({
+            where: { userId: user.id },
+          });
+          const accountRole = totalAccountCount === 0 ? "PRIMARY" : "SECONDARY";
+
           const planValidation = PlanIdSchema.safeParse(
             user.subscription?.plan,
           );
@@ -244,6 +250,7 @@ export async function handleOAuthCallback(code: string, state: string) {
             grantedScopes,
             webhooksEnabled: false,
             isActive: true,
+            accountRole,
           };
 
           // If it's a reconnect of an existing account, update in place; otherwise create a new workspace

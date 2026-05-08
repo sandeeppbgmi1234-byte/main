@@ -100,16 +100,21 @@ export default function LiveHeader({
         ) : (
           <Button
             type="button"
-            onClick={onStart}
+            onClick={automation.status === "PLAN_PAUSED" ? () => window.location.href = "/dash/billing" : onStart}
             disabled={isStarting || isMediaUploading}
-            className="w-10 h-10 p-0 bg-zinc-900 hover:bg-zinc-800 transition-all text-white rounded-md flex items-center justify-center disabled:bg-zinc-300 disabled:text-zinc-500"
-            title="Go Live"
-            aria-label="Start Automation"
+            className={`h-10 p-0 transition-all text-white rounded-md flex items-center justify-center ${
+              automation.status === "PLAN_PAUSED"
+                ? "bg-amber-500 hover:bg-amber-600 px-4"
+                : "w-10 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-300 disabled:text-zinc-500"
+            }`}
+            title={automation.status === "PLAN_PAUSED" ? "Upgrade" : "Go Live"}
+            aria-label={automation.status === "PLAN_PAUSED" ? "Upgrade" : "Start Automation"}
           >
             {isStarting && !isMediaUploading ? (
               <RefreshCw size={18} className="animate-spin" />
+            ) : automation.status === "PLAN_PAUSED" ? (
+              <span className="text-sm font-bold whitespace-nowrap">Upgrade</span>
             ) : (
-              // Wait, the mobile design screenshot image showed a Play button in dark background for play, and some green Live label.
               <Play />
             )}
           </Button>
