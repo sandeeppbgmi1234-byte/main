@@ -11,8 +11,8 @@ import type {
 import { findUserByClerkId } from "@/server/repository/user/user.repository";
 import {
   createAutomation as createAutomationRecord,
-  findAutomationByIdAndUserId,
-  findAutomationByIdAndUserIdForUpdate,
+  findAutomationByIdAndWorkspace,
+  findAutomationByIdAndWorkspaceForUpdate,
   findUserAutomations,
   updateAutomation as updateAutomationRecord,
   stopAutomation as stopAutomationRecord,
@@ -274,8 +274,8 @@ export async function createAutomation(
 }
 
 // Gets a specific automation by ID (ownership enforced in the query)
-export async function getAutomation(userId: string, automationId: string) {
-  const automation = await findAutomationByIdAndUserId(automationId, userId);
+export async function getAutomation(userId: string, instaAccountId: string, automationId: string) {
+  const automation = await findAutomationByIdAndWorkspace(automationId, userId, instaAccountId);
 
   if (!automation) {
     throw new Error("Automation not found or access denied");
@@ -328,11 +328,13 @@ export async function getUserAutomations(
 export async function updateAutomation(
   userId: string,
   automationId: string,
+  instaAccountId: string,
   input: UpdateAutomationInput,
 ) {
-  const existingAutomation = await findAutomationByIdAndUserIdForUpdate(
+  const existingAutomation = await findAutomationByIdAndWorkspaceForUpdate(
     automationId,
     userId,
+    instaAccountId,
   );
 
   if (!existingAutomation) {
@@ -352,7 +354,6 @@ export async function updateAutomation(
     );
   }
 
-  const instaAccountId = (existingAutomation as any).instaAccountId;
 
   // Conflict validation before update
   const newTriggerType =
@@ -511,10 +512,11 @@ export async function updateAutomation(
 }
 
 // Stops an automation (marks as STOPPED)
-export async function stopAutomation(userId: string, automationId: string) {
-  const existingAutomation = await findAutomationByIdAndUserIdForUpdate(
+export async function stopAutomation(userId: string, instaAccountId: string, automationId: string) {
+  const existingAutomation = await findAutomationByIdAndWorkspaceForUpdate(
     automationId,
     userId,
+    instaAccountId,
   );
 
   if (!existingAutomation) {

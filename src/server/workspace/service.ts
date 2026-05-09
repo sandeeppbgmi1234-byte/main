@@ -49,6 +49,9 @@ export const workspaceService = {
     const userWithAccounts = await prisma.user.findUnique({
       where: { clerkId: userId },
       select: {
+        subscription: {
+          select: { status: true },
+        },
         instaAccounts: {
           where: { isActive: true },
           orderBy: { connectedAt: "asc" },
@@ -72,6 +75,7 @@ export const workspaceService = {
         id: currentAccount.id,
         username: currentAccount.username,
         allAccounts: activeAccounts,
+        subscriptionStatus: userWithAccounts?.subscription?.status ?? "ACTIVE",
       };
     }
 

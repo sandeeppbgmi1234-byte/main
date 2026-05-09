@@ -1,7 +1,7 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { workspaceService } from "@/server/workspace";
-import { DashboardHeader } from "./_components";
+import { DashboardHeader, SoftPausedBanner } from "./_components";
 
 export default async function DashboardLayout({
   children,
@@ -18,6 +18,9 @@ export default async function DashboardLayout({
       <AppSidebar variant="inset" />
       <SidebarInset className="bg-[#F1F1F1] flex flex-col gap-4 p-4">
         <DashboardHeader />
+        {workspace.subscriptionStatus === "SOFT_PAUSED" && (
+          <SoftPausedBanner />
+        )}
         {children}
       </SidebarInset>
     </SidebarProvider>

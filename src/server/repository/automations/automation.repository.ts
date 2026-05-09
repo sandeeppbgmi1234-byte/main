@@ -188,16 +188,18 @@ export async function findAutomationByIdWithExecutions(automationId: string) {
  * Returns null if automation doesn't exist or user doesn't own it
  * This prevents information disclosure by checking ownership in the query
  */
-export async function findAutomationByIdAndUserId(
+export async function findAutomationByIdAndWorkspace(
   automationId: string,
   userId: string,
+  instaAccountId: string,
 ) {
   return executeWithErrorHandling(
     () =>
       prisma.automation.findFirst({
         where: {
           id: automationId,
-          userId: userId, // Checks ownership in the query
+          userId: userId,
+          instaAccountId: instaAccountId,
         },
         include: {
           executions: {
@@ -226,16 +228,18 @@ export async function findAutomationByIdAndUserId(
  * Finds an automation by ID and userId (for update/stop operations)
  * Returns null if automation doesn't exist or user doesn't own it
  */
-export async function findAutomationByIdAndUserIdForUpdate(
+export async function findAutomationByIdAndWorkspaceForUpdate(
   automationId: string,
   userId: string,
+  instaAccountId: string,
 ) {
   return executeWithErrorHandling(
     () =>
       prisma.automation.findFirst({
         where: {
           id: automationId,
-          userId: userId, // Checks ownership in the query
+          userId: userId,
+          instaAccountId: instaAccountId,
         },
       }),
     {

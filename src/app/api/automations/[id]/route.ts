@@ -34,9 +34,9 @@ export async function GET(
       );
     }
 
-    const automation = await getAutomation(user.id, automationId);
+    const automation = await getAutomation(user.id, instaAccountId!, automationId);
     return { automation };
-  });
+  }, { requireWorkspace: true });
 }
 
 /**
@@ -62,10 +62,10 @@ export async function PATCH(
       throw new ApiRouteError(errorMessage, "INVALID_INPUT", 400);
     }
 
-    const automation = await updateAutomation(user.id, id, validation.data);
+    const automation = await updateAutomation(user.id, id, instaAccountId!, validation.data);
 
     return { automation };
-  });
+  }, { requireWorkspace: true });
 }
 
 /**
@@ -91,7 +91,7 @@ export async function DELETE(
       );
     }
 
-    const result = await stopAutomation(user.id, automationId);
+    const result = await stopAutomation(user.id, instaAccountId!, automationId);
     return { message: result.message };
-  });
+  }, { requireWorkspace: true });
 }
