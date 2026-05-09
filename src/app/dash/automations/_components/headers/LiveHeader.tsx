@@ -100,20 +100,14 @@ export default function LiveHeader({
         ) : (
           <Button
             type="button"
-            onClick={automation.status === "PLAN_PAUSED" ? () => window.location.href = "/dash/billing" : onStart}
+            onClick={onStart}
             disabled={isStarting || isMediaUploading}
-            className={`h-10 p-0 transition-all text-white rounded-md flex items-center justify-center ${
-              automation.status === "PLAN_PAUSED"
-                ? "bg-amber-500 hover:bg-amber-600 px-4"
-                : "w-10 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-300 disabled:text-zinc-500"
-            }`}
-            title={automation.status === "PLAN_PAUSED" ? "Upgrade" : "Go Live"}
-            aria-label={automation.status === "PLAN_PAUSED" ? "Upgrade" : "Start Automation"}
+            className="w-10 h-10 p-0 bg-zinc-900 hover:bg-zinc-800 transition-all text-white rounded-md flex items-center justify-center disabled:bg-zinc-300 disabled:text-zinc-500"
+            title="Go Live"
+            aria-label="Start Automation"
           >
             {isStarting && !isMediaUploading ? (
               <RefreshCw size={18} className="animate-spin" />
-            ) : automation.status === "PLAN_PAUSED" ? (
-              <span className="text-sm font-bold whitespace-nowrap">Upgrade</span>
             ) : (
               <Play />
             )}

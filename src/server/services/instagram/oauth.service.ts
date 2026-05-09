@@ -185,7 +185,7 @@ export async function handleOAuthCallback(code: string, state: string) {
           // Pre-flight: ensure this IG account isn't already claimed by another user
           const existingAccount = await tx.instaAccount.findUnique({
             where: { instagramUserId: instagramUserIdString },
-            select: { id: true, userId: true, isActive: true },
+            select: { id: true, userId: true, isActive: true, accountRole: true },
           });
 
           if (existingAccount && existingAccount.userId !== user.id) {
@@ -205,7 +205,7 @@ export async function handleOAuthCallback(code: string, state: string) {
           const totalAccountCount = await tx.instaAccount.count({
             where: { userId: user.id },
           });
-          const accountRole = totalAccountCount === 0 ? "PRIMARY" : "SECONDARY";
+          const accountRole = existingAccount ? existingAccount.accountRole : (totalAccountCount === 0 ? "PRIMARY" : "SECONDARY");
 
           const planValidation = PlanIdSchema.safeParse(
             user.subscription?.plan,

@@ -364,7 +364,6 @@ enum AutomationStatus {
   ACTIVE
   STOPPED
   EXPIRED
-  PLAN_PAUSED
 }
 
 enum ExecutionStatus {

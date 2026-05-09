@@ -63,7 +63,7 @@ export function ProfileTab({ data }: ProfileTabProps) {
         <div className="flex flex-col gap-4">
           {data.accounts.map((account) => {
             const isDisabledSecondary =
-              !account.isActive && account.accountRole === "SECONDARY";
+              !isBlackTier && account.accountRole === "SECONDARY";
 
             return (
               <div key={account.id} className="space-y-2 relative">

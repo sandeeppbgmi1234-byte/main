@@ -130,6 +130,17 @@ async function onSubscriptionUpdated(
     );
   }
 
+  const { prisma } = await import("@/server/db");
+  const existingSub = await prisma.subscription.findFirst({
+    where: { user: { clerkId: userId } },
+    select: { plan: true },
+  });
+
+  if (existingSub && existingSub.plan === planId) {
+    console.info(`[Razorpay] Plan unchanged for ${userId}, skipping changePlan`);
+    return;
+  }
+
   // Handle plan change (upgrade/downgrade)
   await changePlan(userId, planId, sub.id, sub.plan_id);
 }

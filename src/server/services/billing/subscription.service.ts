@@ -233,7 +233,7 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
   const ops: Prisma.PrismaPromise<any>[] = [
     prisma.subscription.update({
       where: { userId },
-      data: { status: "EXPIRED" },
+      data: { status: "EXPIRED", plan: "FREE" },
     }),
     prisma.creditLedger.update({
       where: { userId },
@@ -248,8 +248,9 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
     prisma.automation.updateMany({
       where: {
         instaAccount: { userId, accountRole: "SECONDARY" },
+        status: "ACTIVE",
       },
-      data: { status: "PLAN_PAUSED" },
+      data: { status: "STOPPED" },
     }),
     prisma.form.updateMany({
       where: {
@@ -282,7 +283,12 @@ export async function expireSubscription(clerkUserId: string): Promise<void> {
 
   try {
     const { notificationsQueue } = await import("@/server/redis/queues");
-    await notificationsQueue.add("plan-expired", { type: "PLAN_EXPIRED", userId: clerkUserId });
+    const expiredAt = Date.now();
+    await notificationsQueue.add(
+      "plan-expired",
+      { type: "PLAN_EXPIRED", userId: clerkUserId, expiredAt },
+      { jobId: `plan-expired:${clerkUserId}`, removeOnComplete: true }
+    );
   } catch (err) {
     logger.error({ clerkUserId, err }, "Failed to enqueue plan-expired notification");
   }
@@ -303,6 +309,9 @@ export async function changePlan(
   razorpaySubscriptionId: string | null = null,
   razorpayPlanId: string | null = null,
 ): Promise<void> {
+  const userId = await resolveInternalUserId(clerkUserId);
+  const newPlan = PLANS[newPlanId];
+
   const constraintOps = await getPlanConstraintOps(userId, newPlanId);
 
   const ops: Prisma.PrismaPromise<any>[] = [
@@ -464,8 +473,8 @@ async function getPlanConstraintOps(userId: string, newPlanId: PlanId) {
         data: { isActive: false },
       }),
       prisma.automation.updateMany({
-        where: { instaAccount: { userId, accountRole: "SECONDARY" } },
-        data: { status: "PLAN_PAUSED" },
+        where: { instaAccount: { userId, accountRole: "SECONDARY" }, status: "ACTIVE" },
+        data: { status: "STOPPED" },
       }),
       prisma.form.updateMany({
         where: { instaAccount: { userId, accountRole: "SECONDARY" } },
@@ -479,13 +488,7 @@ async function getPlanConstraintOps(userId: string, newPlanId: PlanId) {
         where: { userId, accountRole: "SECONDARY" },
         data: { isActive: true },
       }),
-      prisma.automation.updateMany({
-        where: {
-          instaAccount: { userId, accountRole: "SECONDARY" },
-          status: "PLAN_PAUSED",
-        },
-        data: { status: "ACTIVE" },
-      }),
+
       // Note: We don't auto-publish forms as they might have been drafts by choice
     );
   }

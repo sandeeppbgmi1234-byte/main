@@ -38,7 +38,7 @@ export function initNotificationsWorker() {
         if (type === "QUOTA_FULL") {
           await handleQuotaFullAlert(userId, usedAt);
         } else if (type === "PLAN_EXPIRED") {
-          await handlePlanExpiredAlert(userId);
+          await handlePlanExpiredAlert(userId, job.data.expiredAt);
         } else {
           throw new Error(
             `Unsupported notification job type: ${type} (Job ID: ${job.id})`,
@@ -174,7 +174,7 @@ async function handleQuotaFullAlert(userId: string, usedAt: number) {
 /**
  * Business logic for plan expiration alerts.
  */
-async function handlePlanExpiredAlert(clerkUserId: string) {
+async function handlePlanExpiredAlert(clerkUserId: string, expiredAt?: number) {
   logger.info({ userId: clerkUserId }, "Processing Plan Expired alert...");
   const user = await prisma.user.findUnique({ where: { clerkId: clerkUserId } });
   
@@ -188,7 +188,7 @@ async function handlePlanExpiredAlert(clerkUserId: string) {
       type: "account-expired",
       to: user.email,
       name: user.fullName || "there",
-      expirationDate: new Date().toLocaleDateString(),
+      expirationDate: expiredAt ? new Date(expiredAt).toLocaleDateString() : new Date().toLocaleDateString(),
       reactivateUrl: `${EMAIL_CONFIG.APP.URL}/dash/billing`,
     });
     logger.info({ userId: clerkUserId }, "Plan expired alert email sent successfully");
