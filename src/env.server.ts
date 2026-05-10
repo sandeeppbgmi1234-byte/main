@@ -40,7 +40,7 @@ const envSchema = z.object({
   INSTAGRAM_APP_SECRET: z.string().min(1, "INSTAGRAM_APP_SECRET is required"),
   INSTAGRAM_APP_ID: z.string().min(1, "INSTAGRAM_APP_ID is required"),
   INSTAGRAM_WEBHOOK_VERIFY_TOKEN: z.string().min(1, "INSTAGRAM_WEBHOOK_VERIFY_TOKEN is required"),
-  INSTAGRAM_WEBHOOK_CALLBACK_URL: z.string().url("INSTAGRAM_WEBHOOK_CALLBACK_URL must be a valid URL"),
+  INSTAGRAM_WEBHOOK_CALLBACK_URL: z.string().min(1, "INSTAGRAM_WEBHOOK_CALLBACK_URL is required"),
   INSTAGRAM_REDIRECT_URI: z.string().url("INSTAGRAM_REDIRECT_URI must be a valid URL"),
 
   // App URLs
@@ -58,7 +58,7 @@ const envSchema = z.object({
 
   // Email
   RESEND_API_KEY: z.string().min(1, "RESEND_API_KEY is required"),
-  RESEND_FROM_EMAIL: z.string().email("RESEND_FROM_EMAIL must be a valid email"),
+  RESEND_FROM_EMAIL: z.string().min(1, "RESEND_FROM_EMAIL is required"),
 
   // Node Env
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
