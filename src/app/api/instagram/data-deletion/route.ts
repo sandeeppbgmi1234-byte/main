@@ -37,27 +37,43 @@ export async function POST(req: NextRequest) {
       "[Instagram:DataDeletion] Received data deletion request",
     );
 
-    // Find the associated account using webhookUserId (Meta ID corresponds to this)
     const account = await prisma.instaAccount.findUnique({
       where: { webhookUserId: metaUserId },
-      select: { id: true, user: { select: { clerkId: true } } },
+      select: {
+        id: true,
+        userId: true,
+        user: { select: { clerkId: true } },
+      },
     });
 
     if (account) {
-      // 2. Perform deletion logic or flag for deletion
-      // For compliance, you typically delete their data or schedule it for deletion.
-      // Here we will just deactivate and invalidate for now. The actual deletion
-      // might be handled via a background job or cascading deletes.
+      // 2. Perform FULL DELETION
+      const clerkId = account.user.clerkId;
 
-      await prisma.instaAccount.update({
-        where: { id: account.id },
-        data: { isActive: false },
+      // Find all associated accounts to purge their caches
+      const userAccounts = await prisma.instaAccount.findMany({
+        where: { userId: account.userId },
+        select: { webhookUserId: true },
       });
 
-      await invalidateUser(account.user.clerkId, metaUserId);
+      const webhookUserIds = userAccounts
+        .map((a) => a.webhookUserId)
+        .filter(Boolean) as string[];
+
+      // Delete the user record (triggers cascading DB delete)
+      await prisma.user.delete({
+        where: { clerkId },
+      });
+
+      // Clear cache for all associated IDs
+      const { purgeAllUserCaches } = await import(
+        "../../../../server/redis/operations/user"
+      );
+      await purgeAllUserCaches(clerkId, webhookUserIds);
+
       clogger.info(
-        { accountId: account.id },
-        "[Instagram:DataDeletion] Account data queued for deletion/deactivated",
+        { clerkId, accountCount: webhookUserIds.length },
+        "[Instagram:DataDeletion] Full user data purge completed",
       );
     }
 

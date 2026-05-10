@@ -3,6 +3,7 @@ import * as React from "react";
 import { IS_PRODUCTION, EMAIL_CONFIG } from "./config";
 import { getResendClient } from "./resend";
 import { AccountExpiredEmail } from "./templates/account-expired";
+import { InstagramTokenExpiredEmail } from "./templates/instagram-token-expired";
 import { InvoiceEmail } from "./templates/invoice";
 import { OnboardingEmail } from "./templates/onboarding";
 import { QuotaFullEmail } from "./templates/quota-full";
@@ -71,6 +72,17 @@ export async function sendEmail(payload: EmailPayload): Promise<void> {
           <QuotaFullEmail name={name} upgradeUrl={payload.upgradeUrl} />,
         );
         subject = `Action Required: Your ${EMAIL_CONFIG.APP.NAME} quota is full`;
+        break;
+
+      case "token-expired":
+        html = await render(
+          <InstagramTokenExpiredEmail
+            name={name}
+            expiredAt={payload.expiredAt}
+            reconnectUrl={payload.reconnectUrl}
+          />,
+        );
+        subject = `Action Required: Your Instagram Connection has Expired`;
         break;
 
       default:

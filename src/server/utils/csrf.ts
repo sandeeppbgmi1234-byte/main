@@ -102,9 +102,12 @@ export function validateCsrfProtection(request: Request): {
     return { valid: true };
   }
 
-  // Skips validation for webhook endpoints (they have their own signature validation)
+  // Skips validation for webhook and compliance endpoints (they have their own signature validation)
   const url = new URL(request.url);
-  if (url.pathname.includes("/webhooks/")) {
+  if (
+    url.pathname.includes("/webhooks/") ||
+    url.pathname.includes("/api/instagram/")
+  ) {
     return { valid: true };
   }
 

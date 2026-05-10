@@ -37,7 +37,9 @@ export const workspaceService = {
   /**
    * Gets the verified active workspace for the current session.
    * Redirects to /connect if no accounts or invalid session.
-   */
+    It checks their Cookie to see which Instagram account they used last.
+    If the cookie is missing (new browser), it looks in the DB for any account where isActive: true.
+  */
   async getVerifiedActiveWorkspace() {
     const { userId } = await auth();
     if (!userId) {
@@ -55,7 +57,12 @@ export const workspaceService = {
         instaAccounts: {
           where: { isActive: true },
           orderBy: { connectedAt: "asc" },
-          select: { id: true, username: true, profilePictureUrl: true },
+          select: {
+            id: true,
+            username: true,
+            profilePictureUrl: true,
+            tokenExpiresAt: true,
+          },
         },
       },
     });
@@ -71,6 +78,15 @@ export const workspaceService = {
     const currentAccount = activeAccounts.find((acc) => acc.id === activeId);
 
     if (currentAccount) {
+      // --- HARD-STOP: Token Expiration Check ---
+      const now = new Date();
+      if (
+        currentAccount.tokenExpiresAt &&
+        currentAccount.tokenExpiresAt < now
+      ) {
+        redirect(CONNECT_ROUTE);
+      }
+
       return {
         id: currentAccount.id,
         username: currentAccount.username,

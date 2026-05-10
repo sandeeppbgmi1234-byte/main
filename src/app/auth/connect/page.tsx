@@ -14,12 +14,18 @@ import metaLogo from "@/assets/svgs/meta-color.svg";
 export default async function ConnectPage() {
   const accounts = await getUserWorkspaces();
 
-  const activeAccounts = accounts.filter(acc => acc.isActive);
+  const now = new Date();
+  const validAccounts = accounts.filter(
+    (acc) =>
+      acc.isActive && (!acc.tokenExpiresAt || new Date(acc.tokenExpiresAt) > now),
+  );
 
-  // If user has even one active account connected, redirect to dashboard
-  if (activeAccounts.length > 0) {
+  // If user has even one valid active account connected, redirect to dashboard
+  if (validAccounts.length > 0) {
     redirect(DASHBOARD_ROUTE);
   }
+
+  const hasAccounts = accounts.length > 0;
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] flex items-center justify-center p-4 md:p-8 font-sans">
@@ -27,43 +33,95 @@ export default async function ConnectPage() {
         {/* Left: auth card */}
         <div className="bg-white rounded-lg flex flex-col items-center justify-between p-10 lg:p-12 text-center h-full min-h-[560px]">
           <div className="w-full flex flex-col items-center grow">
-            <h2 className="text-[#6A06E4] font-bold text-[32px] mb-8">
-              Dmbroo
-            </h2>
+            <h2 className="text-[#6A06E4] font-bold text-[32px] mb-8">Dmbroo</h2>
 
-            {/* Fresh user — full connect flow */}
             <h1 className="text-[#1A1A1A] font-semibold text-lg mb-2 tracking-tight">
-              Connect Instagram
+              {hasAccounts ? "Reconnect Instagram" : "Connect Instagram"}
             </h1>
             <p className="text-gray-500 text-[13px] mb-8 max-w-[240px] mx-auto">
-              Use your Instagram account to connect with us.
+              {hasAccounts
+                ? "Your connection has expired. Please reconnect to resume automations."
+                : "Use your Instagram account to connect with us."}
             </p>
 
-            {/* Visual connector */}
-            <div className="flex items-center justify-center my-6">
-              <div className="w-[46px] h-[46px] rounded-[14px] bg-linear-to-tr from-[#FFB800] via-[#FF007A] to-[#6A06E4] flex items-center justify-center ring-[3px] ring-white">
-                <Instagram className="text-white w-6 h-6" />
-              </div>
-              <div className="flex gap-[6px] items-center px-[14px]">
-                {[...Array(9)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="w-[5px] h-[5px] rounded-full bg-[#6A06E4]"
-                  />
-                ))}
-              </div>
-              <div className="w-[46px] h-[46px] rounded-[14px] bg-[#6A06E4] flex items-center justify-center ring-[3px] ring-white">
-                <span className="text-white font-bold text-[10px]">DmBroo</span>
-              </div>
-            </div>
+            {hasAccounts ? (
+              /* Account List for Re-auth */
+              <div className="w-full space-y-3 mb-8">
+                {accounts.map((account) => {
+                  const isTokenExpired =
+                    account.tokenExpiresAt &&
+                    new Date(account.tokenExpiresAt) < now;
+                  const isInactive = !account.isActive;
 
-            <div className="px-4 w-full mt-6">
+                  return (
+                    <div
+                      key={account.id}
+                      className="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-100"
+                    >
+                      <div className="relative h-10 w-10 rounded-full overflow-hidden mr-3 ring-2 ring-white shadow-sm">
+                        {account.profilePictureUrl ? (
+                          <Image
+                            src={account.profilePictureUrl}
+                            alt={account.username}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-gray-200 flex items-center justify-center">
+                            <Instagram className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-sm font-semibold text-gray-900 leading-tight">
+                          {account.username}
+                        </p>
+                        <p className="text-[10px] font-medium text-red-500">
+                          {isTokenExpired ? "⚠️ Session Expired" : "Deactivated"}
+                        </p>
+                      </div>
+                      <form action={instagramOAuthAction}>
+                        <button
+                          type="submit"
+                          className="text-[11px] font-bold text-[#6A06E4] hover:underline"
+                        >
+                          Fix
+                        </button>
+                      </form>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* Visual connector for fresh users */
+              <div className="flex items-center justify-center my-6">
+                <div className="w-[46px] h-[46px] rounded-[14px] bg-linear-to-tr from-[#FFB800] via-[#FF007A] to-[#6A06E4] flex items-center justify-center ring-[3px] ring-white">
+                  <Instagram className="text-white w-6 h-6" />
+                </div>
+                <div className="flex gap-[6px] items-center px-[14px]">
+                  {[...Array(9)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-[5px] h-[5px] rounded-full bg-[#6A06E4]"
+                    />
+                  ))}
+                </div>
+                <div className="w-[46px] h-[46px] rounded-[14px] bg-[#6A06E4] flex items-center justify-center ring-[3px] ring-white">
+                  <span className="text-white font-bold text-[10px]">
+                    DmBroo
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="px-4 w-full mt-auto">
               <form action={instagramOAuthAction}>
                 <button
                   type="submit"
-                  className="w-full bg-[#6A06E4] hover:bg-[#5a05c4] text-white py-3 rounded-[10px] font-medium text-[15px] transition-all"
+                  className="w-full bg-[#6A06E4] hover:bg-[#5a05c4] text-white py-3 rounded-[10px] font-medium text-[15px] transition-all shadow-lg shadow-purple-500/20"
                 >
-                  Go to Instagram
+                  {hasAccounts ? "Add Another Account" : "Go to Instagram"}
                 </button>
               </form>
             </div>
