@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const metaUserId = payload.user_id;
     clogger.info(
-      { payload },
+      { requestId: payload.request_id },
       "[Instagram:DataDeletion] Received data deletion request",
     );
 
@@ -60,19 +60,20 @@ export async function POST(req: NextRequest) {
         .map((a) => a.webhookUserId)
         .filter(Boolean) as string[];
 
-      // Delete the user record (triggers cascading DB delete)
-      await prisma.user.delete({
-        where: { clerkId },
-      });
-
-      // Clear cache for all associated IDs
+      // Clear cache for all associated IDs first while data still exists
       const { purgeAllUserCaches } = await import(
         "../../../../server/redis/operations/user"
       );
       await purgeAllUserCaches(clerkId, webhookUserIds);
 
+      // Delete the user record (triggers cascading DB delete)
+      // We use deleteMany to make this operation idempotent (succeeds even if already deleted)
+      await prisma.user.deleteMany({
+        where: { clerkId },
+      });
+
       clogger.info(
-        { clerkId, accountCount: webhookUserIds.length },
+        { accountCount: webhookUserIds.length },
         "[Instagram:DataDeletion] Full user data purge completed",
       );
     }
@@ -80,8 +81,26 @@ export async function POST(req: NextRequest) {
     // 3. Return the required confirmation response format to Meta
     // Meta requires returning a URL where the user can check the status of their deletion request,
     // and an alphanumeric confirmation code.
-    const confirmationCode = `del_${metaUserId}_${Date.now()}`;
-    const statusUrl = `${process.env.NEXT_PUBLIC_APP_URL}/deletion-status?id=${confirmationCode}`;
+    const confirmationCode = crypto.randomUUID().replace(/-/g, "");
+    
+    // Persist mapping from token for status lookups
+    await prisma.dataDeletionRequest.create({
+      data: {
+        token: confirmationCode,
+        status: "completed",
+      },
+    });
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!baseUrl) {
+      clogger.error("[Instagram:DataDeletion] NEXT_PUBLIC_APP_URL is not set");
+      return NextResponse.json(
+        { error: "Configuration error" },
+        { status: 500 },
+      );
+    }
+
+    const statusUrl = `${baseUrl}/deletion-status?id=${confirmationCode}`;
 
     return NextResponse.json({
       url: statusUrl,

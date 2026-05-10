@@ -328,6 +328,15 @@ model ProcessedWebhookEvent {
   @@map("processed_webhook_events")
 }
 
+model DataDeletionRequest {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  token        String   @unique
+  status       String   @default("completed")
+  requestedAt  DateTime @default(now())
+
+  @@map("data_deletion_requests")
+}
+
 model Invoice {
   id        String        @id @default(auto()) @map("_id") @db.ObjectId
   userId    String        @db.ObjectId

@@ -15,7 +15,7 @@ import {
 import * as React from "react";
 import { EMAIL_CONFIG } from "../config";
 
-interface InstagramTokenExpiredEmailProps {
+export interface InstagramTokenExpiredEmailProps {
   name: string;
   expiredAt: string;
   reconnectUrl: string;

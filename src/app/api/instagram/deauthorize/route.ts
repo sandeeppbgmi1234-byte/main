@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const metaUserId = payload.user_id;
     clogger.info(
-      { payload },
+      { userId: metaUserId, object: payload.object },
       "[Instagram:Deauthorize] Received deauthorization request",
     );
 

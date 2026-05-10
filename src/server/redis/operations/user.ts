@@ -1,6 +1,5 @@
 import { getRedisClient } from "../client";
 import { KEYS, TTL } from "../keys";
-import { RedisError } from "../errors";
 import { logger } from "../../utils/pino";
 
 /**

@@ -8,15 +8,23 @@ import { toast } from "sonner";
 export function DeleteAccountButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [hasDeleted, setHasDeleted] = useState(false);
 
   const handleDelete = () => {
+    // Prevent double-clicks immediately
+    setHasDeleted(true);
+    
     startTransition(async () => {
       try {
         await deleteFullAccountAction();
         toast.success("Account deleted successfully");
       } catch (error) {
+        // Reset flag on error to allow retry
+        setHasDeleted(false);
         toast.error("Failed to delete account");
-        console.error(error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
+        }
       }
     });
   };
@@ -36,6 +44,7 @@ export function DeleteAccountButton() {
 
         {!isOpen ? (
           <button
+            type="button"
             onClick={() => setIsOpen(true)}
             className="w-full md:w-fit px-6 py-3 bg-white border border-red-200 text-red-600 hover:bg-red-50 rounded-sm font-semibold text-sm transition-all active:scale-[0.98]"
           >
@@ -50,14 +59,16 @@ export function DeleteAccountButton() {
             </p>
             <div className="flex flex-wrap gap-3">
               <button
-                disabled={isPending}
+                type="button"
+                disabled={isPending || hasDeleted}
                 onClick={handleDelete}
                 className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-sm font-bold text-sm transition-all disabled:opacity-50 flex items-center gap-2"
               >
-                {isPending && <Loader2 size={16} className="animate-spin" />}
+                {(isPending || hasDeleted) && <Loader2 size={16} className="animate-spin" />}
                 Yes, Purge Everything
               </button>
               <button
+                type="button"
                 disabled={isPending}
                 onClick={() => setIsOpen(false)}
                 className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-sm font-medium text-sm transition-all"

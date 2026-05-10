@@ -20,6 +20,18 @@ import { InstaAccount } from "@prisma/client";
 import type { RefreshTokenResponse } from "@/api/services/instagram/types";
 
 /**
+ * Safely decrypts a token, falling back to raw value if decryption fails.
+ * This ensures backward compatibility with plaintext tokens.
+ */
+function tryDecrypt(value: string): string {
+  try {
+    return decrypt(value);
+  } catch {
+    return value;
+  }
+}
+
+/**
  * Refreshes an Instagram access token
  * Uses graph.instagram.com/refresh_access_token endpoint
  */
@@ -30,7 +42,7 @@ export async function refreshAccessToken(
   // Uses ig_refresh_token grant type for long-lived token refresh
   const params = new URLSearchParams({
     grant_type: "ig_refresh_token",
-    access_token: decrypt(account.accessToken),
+    access_token: tryDecrypt(account.accessToken),
   });
 
   const url = new URL(INSTAGRAM_OAUTH.REFRESH_URL);
@@ -53,7 +65,7 @@ export async function refreshAccessToken(
     const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
     // Updates the database
-    executeWithErrorHandling(
+    await executeWithErrorHandling(
       async () => {
         await prisma.instaAccount.update({
           where: { id: account.id },
@@ -104,7 +116,7 @@ export async function getValidAccessToken(
     return accessToken; // refreshAccessToken returns plain token
   }
 
-  return decrypt(account.accessToken);
+  return tryDecrypt(account.accessToken);
 }
 
 /**

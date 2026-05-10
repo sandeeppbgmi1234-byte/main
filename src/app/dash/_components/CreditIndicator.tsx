@@ -43,7 +43,7 @@ export default function CreditIndicator() {
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (percentage / 100) * circumference;
 
-  const isExhausted = creditLimit !== -1 && creditsUsed >= creditLimit;
+  const isExhausted = creditLimit >= 0 && creditsUsed >= creditLimit;
 
   return (
     <div

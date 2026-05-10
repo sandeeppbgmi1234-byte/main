@@ -96,7 +96,16 @@ export const workspaceService = {
     }
 
     // 3. Stale or Missing Session: Auto-initialize to first valid account
-    const defaultAccount = activeAccounts[0];
+    // Filter out expired accounts from candidates
+    const validCandidates = activeAccounts.filter(
+      (acc) => !acc.tokenExpiresAt || acc.tokenExpiresAt > new Date()
+    );
+
+    if (validCandidates.length === 0) {
+      redirect(CONNECT_ROUTE);
+    }
+
+    const defaultAccount = validCandidates[0];
 
     // Preserve the deep link for redirection after workspace callback
     const headerStore = await headers();
