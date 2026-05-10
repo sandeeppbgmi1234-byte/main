@@ -185,7 +185,7 @@ export async function handleOAuthCallback(code: string, state: string) {
           // Pre-flight: ensure this IG account isn't already claimed by another user
           const existingAccount = await tx.instaAccount.findUnique({
             where: { instagramUserId: instagramUserIdString },
-            select: { id: true, userId: true, isActive: true },
+            select: { id: true, userId: true, isActive: true, accountRole: true },
           });
 
           if (existingAccount && existingAccount.userId !== user.id) {
@@ -200,6 +200,12 @@ export async function handleOAuthCallback(code: string, state: string) {
           const activeAccountCount = await tx.instaAccount.count({
             where: { userId: user.id, isActive: true },
           });
+
+          // Count total connections to determine role
+          const totalAccountCount = await tx.instaAccount.count({
+            where: { userId: user.id },
+          });
+          const accountRole = existingAccount ? existingAccount.accountRole : (totalAccountCount === 0 ? "PRIMARY" : "SECONDARY");
 
           const planValidation = PlanIdSchema.safeParse(
             user.subscription?.plan,
@@ -244,6 +250,7 @@ export async function handleOAuthCallback(code: string, state: string) {
             grantedScopes,
             webhooksEnabled: false,
             isActive: true,
+            accountRole,
           };
 
           // If it's a reconnect of an existing account, update in place; otherwise create a new workspace

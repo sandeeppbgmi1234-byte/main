@@ -8,6 +8,7 @@ export * from "./TableFilterMenu";
 
 export { default as Pagination } from "./Pagination";
 export { default as CreditIndicator } from "./CreditIndicator";
+export { SoftPausedBanner } from "./SoftPausedBanner";
 
 // Mobile specific exports
 export * from "./mobile/MobileCard";

@@ -55,6 +55,7 @@ model InstaAccount {
   lastSyncedAt           DateTime                @default(now())
   webhooksEnabled        Boolean                 @default(false)
   isActive               Boolean                 @default(true)
+  accountRole            InstaAccountRole        @default(PRIMARY)
   instaFollowerSnapshots InstaFollowerSnapshot[]
   automations            Automation[]
   forms                  Form[]
@@ -406,4 +407,9 @@ enum InstaAccountType {
   MEDIA_CREATOR
   CREATOR
   PERSONAL
+}
+
+enum InstaAccountRole {
+  PRIMARY
+  SECONDARY
 }

@@ -12,7 +12,7 @@ export const TTL = {
   API_USAGE: 60 * 60, // 1 hour
   INSTAGRAM_DATA: 15 * 60, // 15 minutes
   AUTOMATION_TTL: 24 * 60 * 60, // 24 hours
-  PENDING_CONFIRMATION: 5 * 60, // 5 minutes
+  PENDING_CONFIRMATION: 60 * 60, // 1 hour
   ASK_RESOLVED: 24 * 60 * 60, // 24 hours
   FOLLOW_WARNING: 60 * 60, // 1 hour
 } as const;

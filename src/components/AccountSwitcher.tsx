@@ -37,12 +37,18 @@ const AccountSwitcher = ({
       try {
         await switchWorkspaceAction(accountId);
         window.location.reload();
-      } catch (error) {
-        console.error("[AccountSwitcher] Failed to switch account:", error);
-        toast.error("Failed to switch account. Please try again.");
+      } catch (error: any) {
+        console.error("Account switch error:", error);
+        if (error?.message?.toLowerCase().includes("upgrade") || error?.code === "PLAN_LIMIT") {
+          toast.error("You need to upgrade for this action.");
+        } else {
+          toast.error("Failed to switch accounts. Please try again.");
+        }
       }
     });
   };
+
+
 
   // If only one account, just show the username
   if (allAccounts.length === 0) {

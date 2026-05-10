@@ -109,7 +109,6 @@ export default function LiveHeader({
             {isStarting && !isMediaUploading ? (
               <RefreshCw size={18} className="animate-spin" />
             ) : (
-              // Wait, the mobile design screenshot image showed a Play button in dark background for play, and some green Live label.
               <Play />
             )}
           </Button>

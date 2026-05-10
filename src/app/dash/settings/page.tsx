@@ -43,6 +43,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
       followersCount: acc.followersCount || 0,
       isActive: acc.isActive,
       tokenExpiresAt: acc.tokenExpiresAt,
+      accountRole: acc.accountRole as "PRIMARY" | "SECONDARY",
     })),
     planId: (internalUser.subscription?.plan as PlanId) || "FREE",
   };
@@ -74,7 +75,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="min-h-full w-full flex flex-col items-center md:py-8 px-4 md:px-8 gap-6 justify-center">
+    <div className="md:min-h-full md:h-fit w-full flex flex-col items-center md:py-8 px-4 md:px-8 gap-6 justify-center">
       {/* Mobile-only header to provide sidebar trigger */}
       <div className="md:hidden w-full">
         <MobileDashboardHeader title="Settings" showSearch={false} />

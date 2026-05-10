@@ -37,6 +37,8 @@ export function initNotificationsWorker() {
       try {
         if (type === "QUOTA_FULL") {
           await handleQuotaFullAlert(userId, usedAt);
+        } else if (type === "PLAN_EXPIRED") {
+          await handlePlanExpiredAlert(userId, job.data.expiredAt);
         } else {
           throw new Error(
             `Unsupported notification job type: ${type} (Job ID: ${job.id})`,
@@ -164,6 +166,36 @@ async function handleQuotaFullAlert(userId: string, usedAt: number) {
     logger.error(
       { userId, err: err.message },
       "Quota alert send failure: Claim released for retry",
+    );
+    throw err; // Trigger job retry
+  }
+}
+
+/**
+ * Business logic for plan expiration alerts.
+ */
+async function handlePlanExpiredAlert(clerkUserId: string, expiredAt?: number) {
+  logger.info({ userId: clerkUserId }, "Processing Plan Expired alert...");
+  const user = await prisma.user.findUnique({ where: { clerkId: clerkUserId } });
+  
+  if (!user || !user.email) {
+    logger.warn({ userId: clerkUserId }, "Plan Expired alert skipped: User or email not found");
+    return;
+  }
+
+  try {
+    await sendEmail({
+      type: "account-expired",
+      to: user.email,
+      name: user.fullName || "there",
+      expirationDate: expiredAt ? new Date(expiredAt).toLocaleDateString() : new Date().toLocaleDateString(),
+      reactivateUrl: `${EMAIL_CONFIG.APP.URL}/dash/billing`,
+    });
+    logger.info({ userId: clerkUserId }, "Plan expired alert email sent successfully");
+  } catch (err: any) {
+    logger.error(
+      { userId: clerkUserId, err: err.message },
+      "Plan expired alert send failure",
     );
     throw err; // Trigger job retry
   }
