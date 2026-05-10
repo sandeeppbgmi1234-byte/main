@@ -29,6 +29,7 @@ import { getPeriodEnd } from "../billing/subscription.service";
 import { syncCreditStateToRedis } from "@/server/redis/operations/billing";
 
 import { refreshAccessToken as refreshToken } from "@/server/instagram/token-manager";
+import { encrypt } from "@/server/utils/encryption";
 import { clogger } from "@/server/utils/consola";
 import { deactivateInstaAccount } from "@/server/repository/instagram/insta-account.repository";
 import { validateSecureState } from "@/server/instagram/oauth/oauth-state";
@@ -244,7 +245,7 @@ export async function handleOAuthCallback(code: string, state: string) {
             followersCount: instagramUser.followers_count,
             followsCount: instagramUser.follows_count,
             mediaCount: instagramUser.media_count,
-            accessToken: longLivedToken.access_token,
+            accessToken: encrypt(longLivedToken.access_token),
             refreshToken: null as null,
             tokenExpiresAt,
             grantedScopes,

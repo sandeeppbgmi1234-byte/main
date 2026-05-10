@@ -9,6 +9,7 @@ import {
   ERROR_MESSAGES,
   getOAuthCredentials,
 } from "@/server/config/instagram.config";
+import { encrypt, decrypt } from "@/server/utils/encryption";
 import {
   LongLivedTokenResponse,
   OAuthTokenResponse,
@@ -29,7 +30,7 @@ export async function refreshAccessToken(
   // Uses ig_refresh_token grant type for long-lived token refresh
   const params = new URLSearchParams({
     grant_type: "ig_refresh_token",
-    access_token: account.accessToken,
+    access_token: decrypt(account.accessToken),
   });
 
   const url = new URL(INSTAGRAM_OAUTH.REFRESH_URL);
@@ -57,7 +58,7 @@ export async function refreshAccessToken(
         await prisma.instaAccount.update({
           where: { id: account.id },
           data: {
-            accessToken: data.access_token,
+            accessToken: encrypt(data.access_token),
             tokenExpiresAt: expiresAt,
             lastSyncedAt: new Date(),
           },
@@ -100,10 +101,10 @@ export async function getValidAccessToken(
 ): Promise<string> {
   if (isTokenExpiringSoon(account.tokenExpiresAt)) {
     const { accessToken } = await refreshAccessToken(account);
-    return accessToken;
+    return accessToken; // refreshAccessToken returns plain token
   }
 
-  return account.accessToken;
+  return decrypt(account.accessToken);
 }
 
 /**

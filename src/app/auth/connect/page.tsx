@@ -14,8 +14,10 @@ import metaLogo from "@/assets/svgs/meta-color.svg";
 export default async function ConnectPage() {
   const accounts = await getUserWorkspaces();
 
-  // If user has even one account connected, redirect to dashboard
-  if (accounts.length > 0) {
+  const activeAccounts = accounts.filter(acc => acc.isActive);
+
+  // If user has even one active account connected, redirect to dashboard
+  if (activeAccounts.length > 0) {
     redirect(DASHBOARD_ROUTE);
   }
 

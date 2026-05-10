@@ -43,9 +43,11 @@ export default function CreditIndicator() {
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (percentage / 100) * circumference;
 
+  const isExhausted = creditLimit !== -1 && creditsUsed >= creditLimit;
+
   return (
     <div
-      className="flex items-center gap-3 px-3 h-full bg-white border border-slate-100 rounded-sm shadow-2xs select-none"
+      className={`flex items-center gap-3 px-3 h-full bg-white border ${isExhausted ? "border-red-100 bg-red-50/30" : "border-slate-100"} rounded-sm shadow-2xs select-none transition-colors duration-300`}
       role="img"
       aria-label={`${creditsUsed.toLocaleString()} of ${creditLimit === -1 ? "unlimited" : creditLimit.toLocaleString()} credits used`}
     >
@@ -63,7 +65,7 @@ export default function CreditIndicator() {
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#E2E8F0" // slate-200
+            stroke={isExhausted ? "#FEE2E2" : "#E2E8F0"} // red-100 : slate-200
             strokeWidth={strokeWidth}
           />
           {/* Progress circle */}
@@ -72,12 +74,12 @@ export default function CreditIndicator() {
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#0F172A" // slate-900 (Darker for better contrast as per image)
+            stroke={isExhausted ? "#EF4444" : "#0F172A"} // red-500 : slate-900
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             style={{
               strokeDashoffset: dashOffset,
-              transition: "stroke-dashoffset 0.5s ease-out",
+              transition: "stroke-dashoffset 0.5s ease-out, stroke 0.3s ease",
             }}
             strokeLinecap="round"
           />
@@ -86,11 +88,11 @@ export default function CreditIndicator() {
 
       {/* Usage Numbers */}
       <div className="flex items-center gap-1.5 text-[13px] font-medium leading-none">
-        <span className="text-slate-900 font-bold">
+        <span className={`${isExhausted ? "text-red-600" : "text-slate-900"} font-bold transition-colors`}>
           {creditsUsed.toLocaleString()}
         </span>
-        <span className="text-slate-300 font-normal">/</span>
-        <span className="text-slate-400 font-normal">
+        <span className={isExhausted ? "text-red-200" : "text-slate-300 font-normal"}>/</span>
+        <span className={isExhausted ? "text-red-400" : "text-slate-400 font-normal"}>
           {creditLimit === -1 ? "∞" : creditLimit.toLocaleString()}
         </span>
       </div>

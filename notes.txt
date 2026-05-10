@@ -48,3 +48,7 @@ okay you can implement the plan. some guidelines - make sure there's no in-line 
 - Never expose internal user IDs in URLs if you can avoid it, use UUIDs instead of sequential integers (/users/1 is guessable)
 - Never leak stack traces or internal error details to the client
 - Log errors internally with full detail, return generic messages externally
+
+
+how about when they hit it, we disbale their account, send them an email with the cause and when they refresh again they see the connect page that when ?
+
