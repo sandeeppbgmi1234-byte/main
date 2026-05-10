@@ -3,7 +3,7 @@ import { VerifyPaymentSchema } from "./schemas";
 import type { VerifyPaymentInput, PaymentVerificationResult } from "./types";
 import { PaymentVerificationError } from "./errors";
 import { verifyHmacSignature } from "./utils";
-import { razorpayConfig } from "./config";
+import { razorpayConfig } from "./config.server";
 
 /**
  * Verifies the signature of a payment.

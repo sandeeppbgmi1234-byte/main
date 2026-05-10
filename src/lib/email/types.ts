@@ -38,9 +38,17 @@ export interface QuotaFullPayload extends BaseEmailPayload {
   upgradeUrl: string; // URL to the pricing page
 }
 
+// Alert when an Instagram token has expired
+export interface InstagramTokenExpiredPayload extends BaseEmailPayload {
+  type: "token-expired";
+  expiredAt: string; // Formatted date string
+  reconnectUrl: string; // URL to the connect page
+}
+
 // Discriminated union for type safety across the email service
 export type EmailPayload =
   | OnboardingPayload
   | AccountExpiredPayload
   | InvoicePayload
-  | QuotaFullPayload;
+  | QuotaFullPayload
+  | InstagramTokenExpiredPayload;

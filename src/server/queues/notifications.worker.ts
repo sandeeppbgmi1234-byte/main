@@ -39,6 +39,8 @@ export function initNotificationsWorker() {
           await handleQuotaFullAlert(userId, usedAt);
         } else if (type === "PLAN_EXPIRED") {
           await handlePlanExpiredAlert(userId, job.data.expiredAt);
+        } else if (type === "TOKEN_EXPIRED") {
+          await handleTokenExpiredAlert(userId, job.data.expiredAt);
         } else {
           throw new Error(
             `Unsupported notification job type: ${type} (Job ID: ${job.id})`,
@@ -196,6 +198,47 @@ async function handlePlanExpiredAlert(clerkUserId: string, expiredAt?: number) {
     logger.error(
       { userId: clerkUserId, err: err.message },
       "Plan expired alert send failure",
+    );
+    throw err; // Trigger job retry
+  }
+}
+
+/**
+ * Business logic for Instagram Token expiration alerts.
+ */
+async function handleTokenExpiredAlert(
+  clerkUserId: string,
+  expiredAt?: number,
+) {
+  logger.info({ userId: clerkUserId }, "Processing Token Expired alert...");
+  const user = await prisma.user.findUnique({ where: { clerkId: clerkUserId } });
+
+  if (!user || !user.email) {
+    logger.warn(
+      { userId: clerkUserId },
+      "Token Expired alert skipped: User or email not found",
+    );
+    return;
+  }
+
+  try {
+    await sendEmail({
+      type: "token-expired",
+      to: user.email,
+      name: user.fullName || "there",
+      expiredAt: expiredAt
+        ? new Date(expiredAt).toLocaleDateString()
+        : new Date().toLocaleDateString(),
+      reconnectUrl: `${EMAIL_CONFIG.APP.URL}/auth/connect`,
+    });
+    logger.info(
+      { userId: clerkUserId },
+      "Token expired alert email sent successfully",
+    );
+  } catch (err: any) {
+    logger.error(
+      { userId: clerkUserId, err: err.message },
+      "Token expired alert send failure",
     );
     throw err; // Trigger job retry
   }

@@ -9,6 +9,7 @@ import {
   ERROR_MESSAGES,
   getOAuthCredentials,
 } from "@/server/config/instagram.config";
+import { encrypt, decrypt } from "@/server/utils/encryption";
 import {
   LongLivedTokenResponse,
   OAuthTokenResponse,
@@ -17,6 +18,18 @@ import { fetchWithTimeout } from "@/server/utils/fetch-with-timeout";
 import { executeWithErrorHandling } from "@/server/repository/repository-utils";
 import { InstaAccount } from "@prisma/client";
 import type { RefreshTokenResponse } from "@/api/services/instagram/types";
+
+/**
+ * Safely decrypts a token, falling back to raw value if decryption fails.
+ * This ensures backward compatibility with plaintext tokens.
+ */
+function tryDecrypt(value: string): string {
+  try {
+    return decrypt(value);
+  } catch {
+    return value;
+  }
+}
 
 /**
  * Refreshes an Instagram access token
@@ -29,7 +42,7 @@ export async function refreshAccessToken(
   // Uses ig_refresh_token grant type for long-lived token refresh
   const params = new URLSearchParams({
     grant_type: "ig_refresh_token",
-    access_token: account.accessToken,
+    access_token: tryDecrypt(account.accessToken),
   });
 
   const url = new URL(INSTAGRAM_OAUTH.REFRESH_URL);
@@ -52,12 +65,12 @@ export async function refreshAccessToken(
     const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
     // Updates the database
-    executeWithErrorHandling(
+    await executeWithErrorHandling(
       async () => {
         await prisma.instaAccount.update({
           where: { id: account.id },
           data: {
-            accessToken: data.access_token,
+            accessToken: encrypt(data.access_token),
             tokenExpiresAt: expiresAt,
             lastSyncedAt: new Date(),
           },
@@ -100,10 +113,10 @@ export async function getValidAccessToken(
 ): Promise<string> {
   if (isTokenExpiringSoon(account.tokenExpiresAt)) {
     const { accessToken } = await refreshAccessToken(account);
-    return accessToken;
+    return accessToken; // refreshAccessToken returns plain token
   }
 
-  return account.accessToken;
+  return tryDecrypt(account.accessToken);
 }
 
 /**

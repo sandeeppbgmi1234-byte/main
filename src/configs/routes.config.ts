@@ -9,6 +9,11 @@ export const PUBLIC_ROUTES = [
   "/auth",
   "/auth/sso-callback",
   "/api/webhooks/instagram",
+  "/api/webhooks/clerk",
+  "/api/webhooks/razorpay",
+  "/api/instagram/deauthorize",
+  "/api/instagram/data-deletion",
+  "/deletion-status",
 ] as const;
 
 // Prefix-match routes — these routes AND all their sub-paths are public

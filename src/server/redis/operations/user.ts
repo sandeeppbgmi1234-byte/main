@@ -1,6 +1,5 @@
 import { getRedisClient } from "../client";
 import { KEYS, TTL } from "../keys";
-import { RedisError } from "../errors";
 import { logger } from "../../utils/pino";
 
 /**
@@ -137,6 +136,56 @@ export async function invalidateUser(
     logger.error(
       { clerkId, webhookUserId, error: error.message },
       "[Redis:User] Failed to invalidate cache",
+    );
+  }
+}
+
+/**
+ * Fully purges all known Redis keys for a user.
+ * This is used during full data deletion (Clerk deletion or Data Purge).
+ */
+export async function purgeAllUserCaches(
+  clerkId: string,
+  webhookUserIds: string[],
+): Promise<void> {
+  const redis = getRedisClient();
+  if (!redis) return;
+
+  try {
+    const pipeline = redis.pipeline();
+
+    for (const webhookUserId of webhookUserIds) {
+      pipeline.del(KEYS.USER_CONNECTION(webhookUserId));
+      pipeline.del(KEYS.ACCOUNT_BY_IG(webhookUserId));
+      pipeline.del(KEYS.ACCESS_TOKEN(clerkId, webhookUserId));
+      pipeline.del(KEYS.AUTOMATIONS_FOR_ACCOUNT_DM(webhookUserId));
+
+      // Pattern-match for automation keys
+      let cursor = "0";
+      do {
+        const [nextCursor, keys] = await redis.scan(
+          cursor,
+          "MATCH",
+          `ig:automation:*:${webhookUserId}:*`,
+          "COUNT",
+          100,
+        );
+        cursor = nextCursor;
+        if (keys.length > 0) {
+          pipeline.del(...keys);
+        }
+      } while (cursor !== "0");
+    }
+
+    await pipeline.exec();
+    logger.info(
+      { clerkId, accountCount: webhookUserIds.length },
+      "[Redis:User] Full user cache purge completed",
+    );
+  } catch (error: any) {
+    logger.error(
+      { clerkId, error: error.message },
+      "[Redis:User] Full cache purge failed",
     );
   }
 }
