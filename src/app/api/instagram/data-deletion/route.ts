@@ -78,6 +78,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!baseUrl) {
+      clogger.error("[Instagram:DataDeletion] NEXT_PUBLIC_APP_URL is not set");
+      return NextResponse.json(
+        { error: "Configuration error" },
+        { status: 500 },
+      );
+    }
+
     // 3. Return the required confirmation response format to Meta
     // Meta requires returning a URL where the user can check the status of their deletion request,
     // and an alphanumeric confirmation code.
@@ -90,15 +99,6 @@ export async function POST(req: NextRequest) {
         status: "completed",
       },
     });
-
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
-    if (!baseUrl) {
-      clogger.error("[Instagram:DataDeletion] NEXT_PUBLIC_APP_URL is not set");
-      return NextResponse.json(
-        { error: "Configuration error" },
-        { status: 500 },
-      );
-    }
 
     const statusUrl = `${baseUrl}/deletion-status?id=${confirmationCode}`;
 

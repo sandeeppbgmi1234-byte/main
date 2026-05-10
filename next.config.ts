@@ -1,3 +1,4 @@
+import "./src/env.server";
 import type { NextConfig } from "next";
 
 // Defines Next.js configuration

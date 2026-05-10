@@ -1,5 +1,5 @@
 import Razorpay from "razorpay";
-import { razorpayConfig } from "./config";
+import { razorpayConfig } from "./config.server";
 
 let instance: Razorpay | null = null;
 

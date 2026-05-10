@@ -12,7 +12,7 @@ import type {
   SubscriptionStatusChangeEvent,
 } from "./types";
 import { verifyHmacSignature } from "./utils";
-import { razorpayConfig } from "./config";
+import { razorpayConfig } from "./config.server";
 import { prisma } from "@/server/db";
 import {
   activateSubscription,
