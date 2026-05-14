@@ -43,7 +43,7 @@ export function CreateAutomationModal({
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
 
       <DialogContent
-        className="w-[95vw] sm:max-w-3xl overflow-hidden rounded-2xl p-4 sm:p-6"
+        className="w-[95vw] sm:max-w-3xl overflow-hidden rounded-xl p-4 sm:p-6"
         showCloseButton={false}
       >
         <DialogHeader className="flex flex-row items-center justify-between mb-2">

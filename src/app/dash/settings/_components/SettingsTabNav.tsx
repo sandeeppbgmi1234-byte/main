@@ -23,33 +23,36 @@ export async function SettingsTabNav() {
       <h1 className="hidden md:block text-xl font-bold text-[#071329] shrink-0">
         Setting
       </h1>
-      <div className="flex flex-wrap items-center gap-2 w-full" role="tablist">
-        {SETTINGS_CONFIG.TABS.map((tab) => {
+      <div className="flex items-center w-full gap-4" role="tablist">
+        {SETTINGS_CONFIG.TABS.map((tab, index) => {
           const isActive = activeTab === tab.id;
           const { Icon } = tab;
 
           return (
-            <Link
-              key={tab.id}
-              href={`?tab=${tab.id}`}
-              role="tab"
-              aria-selected={isActive}
-              className={cn(
-                "flex flex-1 sm:flex-initial items-center justify-center sm:justify-start gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-all duration-200 font-medium text-sm sm:text-base whitespace-nowrap",
-                isActive
-                  ? "bg-[#F3E8FF] text-[#6A06E4]"
-                  : "bg-[#F7FAFC] text-[#4A5568] hover:bg-gray-100",
-              )}
-            >
-              <Icon
-                size={18}
+            <React.Fragment key={tab.id}>
+              <Link
+                href={`?tab=${tab.id}`}
+                role="tab"
+                aria-selected={isActive}
+                style={{ flex: 1 }}
                 className={cn(
-                  "shrink-0",
-                  isActive ? "text-[#6A06E4]" : "text-[#4A5568]",
+                  "flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 transition-all duration-200 font-medium text-sm sm:text-base whitespace-nowrap",
+                  isActive
+                    ? "text-[#6A06E4] border-b-2 border-[#6A06E4] md:border-none md:bg-[#F7F0FF] md:rounded-lg rounded-none bg-transparent"
+                    : "bg-transparent md:rounded-lg md:bg-[#F9F9F9] text-[#4A5568] md:hover:bg-gray-100 rounded-none",
                 )}
-              />
-              <span>{tab.label}</span>
-            </Link>
+              >
+                <Icon
+                  size={18}
+                  className={isActive ? "text-[#6A06E4]" : "text-[#4A5568]"}
+                />
+                <span>{tab.label}</span>
+              </Link>
+
+              {index !== SETTINGS_CONFIG.TABS.length - 1 && (
+                <div className="md:hidden h-6 w-px bg-[#E2E8F0]" />
+              )}
+            </React.Fragment>
           );
         })}
       </div>

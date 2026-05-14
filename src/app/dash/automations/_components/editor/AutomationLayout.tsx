@@ -26,15 +26,15 @@ const DMPlaceholder = () => (
     </div>
 
     <div className="space-y-4">
-      <div className="self-start bg-zinc-100 rounded-2xl rounded-bl-none p-4 max-w-[80%]">
+      <div className="self-start bg-zinc-100 rounded-xl rounded-bl-none p-4 max-w-[80%]">
         <div className="h-2 w-20 bg-zinc-200 rounded-full mb-2" />
         <div className="h-2 w-32 bg-zinc-200 rounded-full" />
       </div>
-      <div className="self-end bg-purple-600 rounded-2xl rounded-br-none p-4 max-w-[80%] ml-auto">
+      <div className="self-end bg-purple-600 rounded-xl rounded-br-none p-4 max-w-[80%] ml-auto">
         <div className="h-2 w-24 bg-white/30 rounded-full mb-2" />
         <div className="h-2 w-16 bg-white/30 rounded-full" />
       </div>
-      <div className="self-start bg-zinc-100 rounded-2xl rounded-bl-none p-4 max-w-[80%]">
+      <div className="self-start bg-zinc-100 rounded-xl rounded-bl-none p-4 max-w-[80%]">
         <div className="h-2 w-28 bg-zinc-200 rounded-full" />
       </div>
     </div>
@@ -48,7 +48,7 @@ const DMPlaceholder = () => (
 
     <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/20 to-white/60 pointer-events-none flex items-center justify-center">
       <div className="bg-white p-6 rounded-3xl flex flex-col items-center gap-3">
-        <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600">
+        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
           <MessageCircle size={28} />
         </div>
         <p className="text-sm font-bold text-zinc-800">All Direct Messages</p>
@@ -83,7 +83,7 @@ export function AutomationLayout({
 
       return (
         <div className="relative w-full aspect-9/16 overflow-hidden border-8 border-zinc-900 bg-zinc-100 flex flex-col items-center justify-center p-6 text-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-zinc-200 flex items-center justify-center text-zinc-400">
+          <div className="w-12 h-12 rounded-xl bg-zinc-200 flex items-center justify-center text-zinc-400">
             {mediaError ? (
               <AlertCircle size={24} />
             ) : (
@@ -184,7 +184,7 @@ export function AutomationLayout({
               </div>
             </div>
 
-            <div className="flex flex-col justify-center gap-3 overflow-y-auto pr-1">
+            <div className="flex flex-col justify-center gap-3 overflow-y-auto">
               {rightCol}
             </div>
           </div>

@@ -254,7 +254,7 @@ const SendDm = ({
               {links.map((link, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 bg-[#F8F9FA] px-4 py-3 rounded-2xl border border-slate-100 group hover:border-purple-200 hover:bg-white transition-all active:scale-[0.99]"
+                  className="flex items-center gap-3 bg-[#F8F9FA] px-4 py-3 rounded-xl border border-slate-100 group hover:border-purple-200 hover:bg-white transition-all active:scale-[0.99]"
                 >
                   <div className="bg-purple-100 p-2 rounded-lg text-purple-600">
                     <LinkIcon size={16} />
@@ -298,7 +298,7 @@ const SendDm = ({
               </DialogTrigger>
             )}
 
-            <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[425px] rounded-2xl sm:rounded-3xl pb-5 sm:pb-6 px-4 sm:px-6">
+            <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[425px] rounded-xl sm:rounded-3xl pb-5 sm:pb-6 px-4 sm:px-6">
               <DialogHeader className="pb-2">
                 <DialogTitle className="text-lg sm:text-xl font-bold text-slate-800">
                   {editingIndex !== null ? "Edit Link" : "Add Link"}
@@ -306,7 +306,7 @@ const SendDm = ({
               </DialogHeader>
 
               <div className="space-y-3 sm:space-y-4 pt-2">
-                <div className="rounded-lg sm:rounded-2xl border border-slate-100 overflow-hidden divide-y divide-slate-50 bg-slate-50/50">
+                <div className="rounded-lg sm:rounded-xl border border-slate-100 overflow-hidden divide-y divide-slate-50 bg-slate-50/50">
                   {/* Title Row */}
                   <div className="flex items-start sm:items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-3.5 bg-white group transition-colors hover:bg-slate-50">
                     <div className="text-slate-400 group-hover:text-purple-500 transition-colors mt-0.5 sm:mt-0 shrink-0">

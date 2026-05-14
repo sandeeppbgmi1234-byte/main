@@ -33,12 +33,13 @@ function DeletionStatusContent() {
               Deletion Request Received
             </h1>
             <p className="text-gray-400 mb-8 leading-relaxed">
-              Your request to remove all associated Instagram data from DmBroo has been successfully processed.
+              Your request to remove all associated Instagram data from DmBroo
+              has been successfully processed.
             </p>
 
             {/* ID Badge */}
             {id && (
-              <div className="w-full bg-white/[0.05] border border-white/10 rounded-2xl p-4 mb-8">
+              <div className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-4 mb-8">
                 <span className="block text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-1 font-semibold">
                   Confirmation ID
                 </span>
@@ -53,8 +54,8 @@ function DeletionStatusContent() {
                 <ShieldCheck className="w-4 h-4" />
                 Your privacy is our top priority.
               </div>
-              
-              <Link 
+
+              <Link
                 href="/"
                 className="flex items-center justify-center gap-2 w-full py-3 px-6 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors duration-200 group/btn"
               >
@@ -76,11 +77,13 @@ function DeletionStatusContent() {
 
 export default function DeletionStatusPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
       <DeletionStatusContent />
     </Suspense>
   );

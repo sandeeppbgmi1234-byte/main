@@ -75,23 +75,25 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="md:min-h-full md:h-fit w-full flex flex-col items-center md:py-8 px-4 md:px-8 gap-6 justify-center">
-      {/* Mobile-only header to provide sidebar trigger */}
+    <>
       <div className="md:hidden w-full">
         <MobileDashboardHeader title="Settings" showSearch={false} />
       </div>
+      <div className="h-full w-full flex flex-col items-center justify-start md:justify-center gap-6">
+        {/* Mobile-only header to provide sidebar trigger */}
 
-      <div className="w-full max-w-4xl flex flex-col gap-4">
-        {/* Navigation/Header Card (Desktop Only effectively, but keeping for tab switching) */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6 flex items-center justify-between overflow-x-auto">
-          <SettingsTabNav />
-        </div>
+        <div className="w-full max-w-4xl flex flex-col md:gap-4 gap-0 md:h-fit h-full">
+          {/* Navigation/Header Card (Desktop Only effectively, but keeping for tab switching) */}
+          <div className="bg-white md:rounded-lg rounded-none border-none md:border border-gray-200 p-4 md:p-6 flex items-center justify-between overflow-x-auto rounded-t-xl">
+            <SettingsTabNav />
+          </div>
 
-        {/* Content Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 px-6 md:px-10 p-12">
-          {renderTabContent()}
+          {/* Content Card */}
+          <div className="md:bg-white bg-transparent md:rounded-lg md:px-8 px-0 md:py-8 py-0 p-0 h-full md:h-fit">
+            {renderTabContent()}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

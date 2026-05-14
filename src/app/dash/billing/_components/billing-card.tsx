@@ -141,7 +141,7 @@ export function BillingCard({ plan, isCurrent }: BillingCardProps) {
         <button
           onClick={handleCheckout}
           disabled={loading || isCurrent || isCreatingCheckoutRef.current}
-          className={`w-full py-4 rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 ${
+          className={`w-full py-4 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 ${
             isCurrent
               ? "bg-emerald-500/10 text-emerald-600 cursor-default"
               : "bg-primary text-primary-foreground"

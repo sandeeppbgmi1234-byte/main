@@ -39,14 +39,14 @@ export function RefreshInstaDialog() {
         </DialogHeader>
 
         <div className="flex items-center justify-center gap-6 py-4">
-          <div className="w-[72px] h-[72px] rounded-2xl bg-white border border-[#F1F5F9] flex items-center justify-center relative overflow-hidden group">
+          <div className="w-[72px] h-[72px] rounded-xl bg-white border border-[#F1F5F9] flex items-center justify-center relative overflow-hidden group">
             <div className="absolute inset-0 bg-linear-to-tr from-[#FFB3B3] via-[#FF4D4D] to-[#E60000] opacity-10" />
             <Instagram className="w-10 h-10 text-[#E4405F] relative z-10" />
           </div>
 
           <RefreshCw className="w-8 h-8 text-[#94A3B8]" />
 
-          <div className="w-[72px] h-[72px] rounded-2xl bg-[#6A06E4] flex items-center justify-center">
+          <div className="w-[72px] h-[72px] rounded-xl bg-[#6A06E4] flex items-center justify-center">
             <span className="text-white font-semibold text-xs">DmBroo</span>
           </div>
         </div>

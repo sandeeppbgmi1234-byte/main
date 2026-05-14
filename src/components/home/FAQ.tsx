@@ -48,7 +48,7 @@ const FAQ = () => {
 
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* FAQ Accordion */}
-        <div className="bg-white rounded-2xl   overflow-hidden">
+        <div className="bg-white rounded-xl   overflow-hidden">
           {faqs.map((faq, index) => (
             <FAQItem
               key={index}
@@ -61,7 +61,7 @@ const FAQ = () => {
         </div>
 
         {/* Mockup Image */}
-        <div className="relative w-full h-[500px] rounded-2xl overflow-hidden border-2 border-[#A876E7]/20 ">
+        <div className="relative w-full h-[500px] rounded-xl overflow-hidden border-2 border-[#A876E7]/20 ">
           <div className="absolute inset-0 bg-linear-to-br from-[#A876E7]/5 to-[#6A06E4]/5" />
           <div className="relative w-full h-full flex items-center justify-center p-8">
             <div className="text-center text-gray-400">

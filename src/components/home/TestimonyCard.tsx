@@ -18,7 +18,7 @@ const TestimonyCard: React.FC<TestimonyCardProps> = ({
 }) => {
   return (
     <div
-      className={`absolute bg-white rounded-2xl p-5 hover:-translate-y-1 transition-all duration-300 w-[280px] ${className}`}
+      className={`absolute bg-white rounded-xl p-5 hover:-translate-y-1 transition-all duration-300 w-[280px] ${className}`}
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">

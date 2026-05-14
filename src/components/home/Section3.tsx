@@ -57,7 +57,7 @@ const TabChanger = () => {
           </div>
 
           {/* Right: Image Placeholder */}
-          <div className="bg-gray-100 rounded-2xl h-64 flex items-center justify-center">
+          <div className="bg-gray-100 rounded-xl h-64 flex items-center justify-center">
             <span className="text-gray-400 text-sm">Image Preview</span>
           </div>
         </div>

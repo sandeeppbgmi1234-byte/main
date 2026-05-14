@@ -25,7 +25,7 @@ const AskToFollow = ({
 
   return (
     <LockedOverlay isLocked={isLocked} className="w-full">
-      <div className="bg-white rounded-2xl border border-purple-300 w-full overflow-hidden transition-all duration-200">
+      <div className="bg-white rounded-xl border border-purple-300 w-full overflow-hidden transition-all duration-200">
         {/* Header with toggle */}
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center justify-center gap-2">
