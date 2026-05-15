@@ -47,7 +47,7 @@ export default async function BillingPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-muted/50 px-6 py-4 rounded-2xl border">
+          <div className="flex items-center gap-4 bg-muted/50 px-6 py-4 rounded-xl border">
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Current Plan

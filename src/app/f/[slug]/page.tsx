@@ -45,7 +45,7 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
           <img
             src={form.coverImage}
             alt="Form cover"
-            className="w-full h-48 object-cover rounded-2xl"
+            className="w-full h-48 object-cover rounded-xl"
           />
         )}
 
@@ -58,7 +58,7 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
         </div>
 
         {/* Interactive form */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-100">
+        <div className="bg-white rounded-xl p-6 border border-slate-100">
           <PublicFormView form={form as unknown as FormPublic} slug={slug} />
         </div>
         <p className="text-center text-sm text-slate-500">

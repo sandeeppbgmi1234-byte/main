@@ -80,7 +80,7 @@ const WorkspacePage = async () => {
                   >
                     <button
                       type="submit"
-                      className="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-300 group cursor-pointer border border-transparent hover:border-gray-200"
+                      className="w-full flex items-center p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-300 group cursor-pointer border border-transparent hover:border-gray-200"
                     >
                       <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 ring-2 ring-white">
                         {account.profilePictureUrl ? (

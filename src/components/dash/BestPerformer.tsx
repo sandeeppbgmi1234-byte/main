@@ -101,7 +101,7 @@ export function BestPerformerWidget({
 
         {isWidgetLoading ? (
           <div className="flex-1 flex items-center justify-center min-h-[250px]">
-            <div className="w-full h-full bg-gray-50 animate-pulse rounded-2xl flex items-center justify-center">
+            <div className="w-full h-full bg-gray-50 animate-pulse rounded-xl flex items-center justify-center">
               <span className="text-gray-400 font-medium">
                 Loading details...
               </span>
@@ -226,7 +226,7 @@ export function BestPerformerWidget({
                 )}
               </div>
 
-              <div className="flex flex-col items-center gap-1.5 bg-white/50 backdrop-blur-sm py-3 px-6 rounded-2xl border border-white">
+              <div className="flex flex-col items-center gap-1.5 bg-white/50 backdrop-blur-sm py-3 px-6 rounded-xl border border-white">
                 <span className="text-purple-600 font-bold text-sm">
                   {config.bestTimeData.fullDate}
                 </span>

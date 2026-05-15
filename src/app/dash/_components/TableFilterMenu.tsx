@@ -102,7 +102,7 @@ export const TableFilterMenu = <V extends TableVariant>({
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="min-w-[150px] p-1.5 rounded-2xl bg-white border border-slate-100 shadow-xl"
+        className="min-w-[150px] p-1.5 rounded-xl bg-white border border-slate-100 shadow-xl"
       >
         <DropdownMenuLabel className="px-3 pt-2 pb-1 text-sm font-medium text-slate-900 border-b border-slate-50 mb-1">
           Filter By

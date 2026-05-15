@@ -25,7 +25,7 @@ export function UsageBar({ used, limit }: UsageBarProps) {
         </span>
       </div>
 
-      <div className="h-6 w-full bg-muted rounded-2xl overflow-hidden border">
+      <div className="h-6 w-full bg-muted rounded-xl overflow-hidden border">
         <div
           className={`h-full transition-all duration-700 ease-out flex items-center justify-end pr-3 ${
             isExhausted ? "bg-red-500" : "bg-primary"

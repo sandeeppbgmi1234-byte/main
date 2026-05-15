@@ -6,8 +6,6 @@ import { UpgradeTooltip } from "@/components/shared/UpgradeTooltip";
 import CrownIcon from "@/assets/svgs/CrownIcon.svg";
 import Image from "next/image";
 
-import { DeleteAccountButton } from "./DeleteAccountButton";
-
 interface ProfileTabProps {
   data: ProfileData;
 }
@@ -27,22 +25,22 @@ export function ProfileTab({ data }: ProfileTabProps) {
   };
 
   return (
-    <div className="w-full flex flex-col gap-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 text-left">
+    <div className="w-full flex flex-col gap-12 h-full bg-white md:p-0 px-4 py-8">
+      <div className="flex flex-col md:flex-row gap-5 md:gap-12 text-left h-full md:justify-between md:items-stretch justify-start items-start">
         {/* Left Column: Email */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 w-full">
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-[#111827]">
+            <h2 className="md:text-xl text-lg font-semibold text-[#111827]">
               Connected Email
             </h2>
-            <p className="text-[#6B7280] text-[14px]">
+            <p className="text-[#6B7280] md:text-sm text-xs">
               Change the settings for your current workspace
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
             <div className="bg-[#F9FAFB] rounded-lg p-5 flex items-center justify-between border border-[#F3F4F6]">
-              <span className="text-[16px] font-medium text-[#111827]">
+              <span className="md:text-base text-sm font-medium text-[#111827]">
                 {data.email}
               </span>
               {data.isEmailVerified && (
@@ -54,55 +52,59 @@ export function ProfileTab({ data }: ProfileTabProps) {
           </div>
         </div>
 
+        <hr className="w-full block md:hidden" />
+
         {/* Right Column: Accounts */}
-        <div className="flex flex-col gap-6">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold text-[#111827]">
-              Connected Accounts
-            </h2>
-            <p className="text-[#6B7280] text-[14px]">
-              Change the settings for your current workspace
-            </p>
-          </div>
+        <div className="flex flex-col gap-6 w-full h-full">
+          <div className="space-y-4 flex-1">
+            {" "}
+            <div className="space-y-1">
+              <h2 className="md:text-xl text-lg font-semibold text-[#111827]">
+                Connected Accounts
+              </h2>
+              <p className="text-[#6B7280] md:text-sm text-xs">
+                Change the settings for your current workspace
+              </p>
+            </div>
+            <div className="flex flex-col gap-4">
+              {data.accounts.map((account) => {
+                const isDisabledSecondary =
+                  !isBlackTier && account.accountRole === "SECONDARY";
 
-          <div className="flex flex-col gap-4">
-            {data.accounts.map((account) => {
-              const isDisabledSecondary =
-                !isBlackTier && account.accountRole === "SECONDARY";
-
-              return (
-                <div key={account.id} className="space-y-2 relative">
-                  <div
-                    className={`bg-[#F9FAFB] rounded-sm p-3 flex items-center justify-between border ${isDisabledSecondary ? "border-red-200" : "border-[#F3F4F6]"}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-[#111827]">
-                        @{account.username}
-                      </span>
-                      {isDisabledSecondary && (
-                        <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">
-                          LOCKED
+                return (
+                  <div key={account.id} className="space-y-2 relative">
+                    <div
+                      className={`bg-[#F9FAFB] rounded-sm p-3 flex items-center justify-between border ${isDisabledSecondary ? "border-red-200" : "border-[#F3F4F6]"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-[#111827]">
+                          @{account.username}
                         </span>
+                        {isDisabledSecondary && (
+                          <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full tracking-wide">
+                            LOCKED
+                          </span>
+                        )}
+                      </div>
+                      {isDisabledSecondary && (
+                        <Link
+                          href="/dash/billing"
+                          className="text-xs bg-[#6A06E4] hover:bg-[#5B05C2] text-white px-3 py-1.5 rounded-sm font-medium transition-colors z-10"
+                        >
+                          Upgrade to unlock
+                        </Link>
                       )}
                     </div>
+                    <p className="text-[#9CA3AF] text-xs font-normal px-2">
+                      User Since: {formatDate(account.connectedAt)}
+                    </p>
                     {isDisabledSecondary && (
-                      <Link
-                        href="/dash/billing"
-                        className="text-xs bg-[#6A06E4] hover:bg-[#5B05C2] text-white px-3 py-1.5 rounded-sm font-medium transition-colors z-10"
-                      >
-                        Upgrade to unlock
-                      </Link>
+                      <div className="absolute inset-0 bg-white/40 pointer-events-none" />
                     )}
                   </div>
-                  <p className="text-[#9CA3AF] text-xs font-normal px-2">
-                    User Since: {formatDate(account.connectedAt)}
-                  </p>
-                  {isDisabledSecondary && (
-                    <div className="absolute inset-0 bg-white/40 pointer-events-none" />
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
           {/* Action Button */}
           {!isBlackTier ? (
@@ -134,9 +136,6 @@ export function ProfileTab({ data }: ProfileTabProps) {
           )}
         </div>
       </div>
-
-      {/* Full Purge Tool (Compliance) */}
-      <DeleteAccountButton />
     </div>
   );
 }

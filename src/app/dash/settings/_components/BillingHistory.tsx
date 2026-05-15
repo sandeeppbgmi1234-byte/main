@@ -17,8 +17,8 @@ const statusConfig = {
  */
 export function BillingHistory({ invoices }: BillingHistoryProps) {
   return (
-    <div className="w-full bg-white border border-[#E5E7EB] rounded-2xl p-5 md:p-8 h-full flex flex-col">
-      <h3 className="text-lg font-semibold text-[#111827] tracking-tight">
+    <div className="w-full bg-white border border-[#E5E7EB] rounded-xl p-5 md:p-8 h-full flex flex-col">
+      <h3 className="md:text-lg text-base font-semibold text-[#111827] tracking-tight">
         History
       </h3>
 
@@ -35,7 +35,7 @@ export function BillingHistory({ invoices }: BillingHistoryProps) {
             return (
               <div key={invoice.id}>
                 <div className="flex items-center justify-between py-4">
-                  <span className="text-[15px] font-medium text-[#111827] font-mono">
+                  <span className="md:text-[15px] text-sm font-medium text-[#111827] font-mono">
                     {invoice.id}
                   </span>
                   <div className="flex items-center gap-2">
@@ -46,7 +46,7 @@ export function BillingHistory({ invoices }: BillingHistoryProps) {
                       />
                     </div>
                     <span
-                      className={`text-[14px] font-bold ${config.text} capitalize`}
+                      className={`md:text-[14px] text-sm font-bold ${config.text} capitalize`}
                     >
                       {invoice.status}
                     </span>

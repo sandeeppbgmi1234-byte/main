@@ -16,17 +16,17 @@ export function PaymentMethod({ method, detail }: PaymentMethodProps) {
   if (!method) return null;
 
   return (
-    <div className="w-full bg-white border border-[#E5E7EB] rounded-2xl p-5 md:p-8">
+    <div className="w-full bg-white border border-[#E5E7EB] rounded-xl p-5 md:p-8">
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-4">
-          <h3 className="text-lg font-semibold text-[#111827] tracking-tight">
+          <h3 className="md:text-lg text-base font-semibold text-[#111827] tracking-tight">
             Payment Method
           </h3>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center shrink-0">
               <PaymentIcon method={method} />
             </div>
-            <span className="text-[15px] font-semibold text-[#111827]">
+            <span className="md:text-[15px] text-sm font-medium text-[#111827]">
               {detail || "No details provided"}
             </span>
           </div>

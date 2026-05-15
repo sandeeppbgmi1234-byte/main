@@ -70,7 +70,7 @@ export function AutomationRightCol<T extends SupportedFormValues>({
   const { setValue } = useFormContext<T>();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-[79vh] overflow-y-auto p-1 flex flex-col justify-center items-center">
       {includePublicReply && (
         <PublicReplyToComments
           enabled={!!publicReplyEnabled}

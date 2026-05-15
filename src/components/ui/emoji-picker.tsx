@@ -45,7 +45,7 @@ export function EmojiPicker({
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className="p-0 border-none  rounded-2xl overflow-hidden"
+        className="p-0 border-none  rounded-xl overflow-hidden"
         onCloseAutoFocus={(e) => {
           e.preventDefault();
         }}

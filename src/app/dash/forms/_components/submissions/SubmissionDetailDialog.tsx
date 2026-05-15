@@ -92,7 +92,7 @@ export const SubmissionDetailDialog = ({
                 return (
                   <div
                     key={field.id}
-                    className="bg-[#F9F9F9] p-5 rounded-2xl border border-slate-100/50 space-y-1.5 transition-all hover:bg-slate-100/50"
+                    className="bg-[#F9F9F9] p-5 rounded-xl border border-slate-100/50 space-y-1.5 transition-all hover:bg-slate-100/50"
                   >
                     <p className="text-[12px] font-medium text-[#6D6D6D] uppercase tracking-widest block">
                       {field.label}
