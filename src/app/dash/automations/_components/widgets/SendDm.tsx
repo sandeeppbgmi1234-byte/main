@@ -179,7 +179,7 @@ const SendDm = ({
     <div className="bg-white rounded-lg border border-purple-300 w-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3.5">
-        <span className="text-sm font-semibold text-slate-800">Send a DM</span>
+        <span className="text-sm font-bold text-slate-800">Send a DM</span>
         <button
           type="button"
           onClick={() => setCollapsed((c) => !c)}
@@ -313,7 +313,7 @@ const SendDm = ({
                       <Type size={17} />
                     </div>
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                      <span className="text-xs sm:text-sm font-medium text-slate-400 sm:min-w-20">
+                      <span className="text-xs sm:text-sm font-medium text-[#071329] sm:min-w-20">
                         Enter Title
                       </span>
                       <AutomationInput
@@ -333,7 +333,7 @@ const SendDm = ({
                       <LinkIcon size={17} />
                     </div>
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                      <span className="text-xs sm:text-sm font-medium text-slate-400 sm:min-w-20">
+                      <span className="text-xs sm:text-sm font-medium text-[#071329] sm:min-w-20">
                         Enter Link
                       </span>
                       <input

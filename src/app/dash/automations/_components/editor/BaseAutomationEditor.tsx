@@ -142,6 +142,7 @@ export function BaseAutomationEditor<
         isMobile={isMobile}
         isNameDialogOpen={isNameDialogOpen}
         setIsNameDialogOpen={setIsNameDialogOpen}
+        isDirty={form.formState.isDirty}
       />
     ) : (
       <FreshHeader

@@ -39,7 +39,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup className="h-full">
           <SidebarGroupContent className="h-full">
             <SidebarMenu className="h-full">
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col gap-4 h-full justify-between">
                 <AppSidebarNav />
                 <Button
                   variant={"destructive"}
@@ -52,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className="flex items-center justify-start gap-2 text-black"
                   >
                     <LogOut className="w-4 h-4 text-red-500" />
-                    <span className="text-[16px]">Log out</span>
+                    <span className="text-base">Log out</span>
                   </Link>
                 </Button>
               </div>

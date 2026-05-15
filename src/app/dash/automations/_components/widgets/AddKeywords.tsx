@@ -61,9 +61,7 @@ const AddKeywords = ({
         className="w-full flex items-center justify-between px-4 py-3.5 text-left"
         onClick={() => setOpen((o) => !o)}
       >
-        <span className="text-sm font-semibold text-slate-800">
-          Setup Keywords
-        </span>
+        <span className="text-sm font-bold text-slate-800">Setup Keywords</span>
         {open ? (
           <ChevronUp size={16} className="text-slate-500" />
         ) : (

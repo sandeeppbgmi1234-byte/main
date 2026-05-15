@@ -12,6 +12,8 @@ import { RefreshInstaDialog } from "@/app/auth/_components/RefreshInstaDialog";
 
 import { NewFormButton } from "@/components/dash/forms/NewFormButton";
 
+import { ExportContactsButton } from "@/app/dash/contacts/_components/ExportContactsButton";
+
 export interface HeaderConfig {
   showSearch: boolean;
   childComp: React.ReactNode;
@@ -52,20 +54,7 @@ export const DASHBOARD_HEADER_CONFIG: Record<string, HeaderConfig> = {
   },
   "/dash/contacts": {
     showSearch: true,
-    childComp: (
-      <Button
-        className={cn(
-          CONTACTS_BUTTON_CLASSES,
-          "gap-2 px-4 opacity-70 cursor-not-allowed",
-        )}
-        type="button"
-        disabled
-        title="Export feature coming soon"
-      >
-        <Download size={15} />
-        Export List
-      </Button>
-    ),
+    childComp: <ExportContactsButton />,
   },
 };
 
