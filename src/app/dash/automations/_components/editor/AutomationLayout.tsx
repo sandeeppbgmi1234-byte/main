@@ -167,8 +167,8 @@ export function AutomationLayout({
             </div>
           </div>
         ) : (
-          <div className="md:items-center justify-center flex-1 min-h-0 grid grid-cols-[280px_30rem_280px] gap-4 p-4 overflow-hidden">
-            <div className="flex flex-col gap-3 overflow-y-auto pr-1">
+          <div className="justify-center flex-1 min-h-0 grid grid-cols-[minmax(250px,280px)_1fr_minmax(250px,280px)] gap-4 p-4 overflow-hidden">
+            <div className="flex flex-col gap-3 overflow-y-auto h-full custom-scrollbar">
               {leftCol}
             </div>
 
@@ -178,7 +178,7 @@ export function AutomationLayout({
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 overflow-y-auto">
+            <div className="flex flex-col gap-3 overflow-y-auto h-full custom-scrollbar">
               {rightCol}
             </div>
           </div>

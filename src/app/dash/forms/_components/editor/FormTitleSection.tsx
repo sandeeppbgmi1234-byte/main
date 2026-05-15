@@ -43,7 +43,7 @@ export default function FormTitleSection() {
             (titleInputRef as any).current = e;
           }}
           placeholder="Add a title"
-          className="flex-1 text-lg font-bold text-slate-900 bg-transparent outline-none placeholder:text-slate-500"
+          className="flex-1 text-lg font-bold text-[#071329] placeholder:text-black/70 bg-transparent outline-none"
         />
         <div onMouseDown={(e) => e.preventDefault()}>
           <EmojiPicker onEmojiSelect={handleTitleEmoji} size={20} />

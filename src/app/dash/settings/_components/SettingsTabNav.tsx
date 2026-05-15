@@ -50,7 +50,11 @@ export async function SettingsTabNav() {
               </Link>
 
               {index !== SETTINGS_CONFIG.TABS.length - 1 && (
-                <div className="md:hidden h-6 w-px bg-[#E2E8F0]" />
+                <div
+                  className="md:hidden h-6 w-px bg-[#E2E8F0]"
+                  aria-hidden="true"
+                  role="presentation"
+                />
               )}
             </React.Fragment>
           );

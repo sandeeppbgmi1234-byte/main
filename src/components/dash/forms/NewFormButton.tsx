@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formKeys } from "@/keys/react-query";
 import { formService } from "@/api/services/forms";
 import { cn } from "@/server/utils";
+import { CrownIcon } from "lucide-react";
 
 /**
  * NewFormButton Component
@@ -72,7 +73,11 @@ export function NewFormButton() {
       }
     >
       {isAtLimit ? (
-        <span className="h-full flex items-center gap-2">
+        <span
+          className="h-full flex items-center gap-2"
+          aria-hidden="true"
+          role="presentation"
+        >
           <Image
             src={PlusIconSvg}
             alt="add"
@@ -81,6 +86,7 @@ export function NewFormButton() {
             className="opacity-50"
           />
           New Form
+          {maxForms !== -1 && <CrownIcon className="w-4 h-4 opacity-80" />}
         </span>
       ) : (
         <Link href="/dash/forms/new" className="h-full flex items-center gap-2">

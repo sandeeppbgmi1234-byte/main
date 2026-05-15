@@ -60,7 +60,7 @@ const DesktopLayout = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="flex flex-col h-full min-h-screen gap-4">
+    <div className="flex flex-col gap-4 h-full">
       <EditorHeader activeTab={activeTab} />
       <FormTabs formId={formId} activeTab={activeTab} />
       <div

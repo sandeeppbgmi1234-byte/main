@@ -6,6 +6,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    letter-spacing: 0px;
   }
 
   /* Hide scrollbars globally for all browsers */
