@@ -50,10 +50,10 @@ export default function TabSelector({
             }
           }}
         >
-          <h3 className="text-base font-semibold text-purple-600 mb-2">
+          <h3 className="text-base font-semibold text-[#6A06E4] mb-2">
             {tab.title}
           </h3>
-          <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
+          <p className="text-sm font-medium text-[#828282] leading-relaxed line-clamp-2">
             {tab.description}
           </p>
         </button>

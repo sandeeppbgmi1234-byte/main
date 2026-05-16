@@ -2,14 +2,14 @@ import { FormSubmission } from "@/api/services/forms/form";
 import type { FormField } from "@dm-broo/common-types";
 
 // Characters that trigger spreadsheet formula execution
-const FORMULA_LEADING_CHARS = ["=", "+", "-", "@"];
+const FORMULA_PREFIX_RE = /^[\t\r ]*[=+\-@]/;
 
 /**
  * Escapes values for CSV safety to handle commas, quotes, and formula injection
  */
 const escapeCsvValue = (val: any) => {
   let str = String(val ?? "");
-  if (FORMULA_LEADING_CHARS.some((char) => str.startsWith(char))) {
+  if (FORMULA_PREFIX_RE.test(str)) {
     str = "'" + str;
   }
   return `"${str.replace(/"/g, '""')}"`;
@@ -69,7 +69,9 @@ export const downloadSubmissionsCSV = (
   });
 
   // 4. Construct CSV and trigger download
-  const csvContent = [headers.join(","), ...rows].join("\n");
+  const csvContent = [headers.map(escapeCsvValue).join(","), ...rows].join(
+    "\n",
+  );
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 

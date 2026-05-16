@@ -54,6 +54,7 @@ const ContactsPage = () => {
       if (statusFilter !== "ALL") {
         if (statusFilter === "POST" && c.kind !== "Post") return false;
         if (statusFilter === "REEL" && c.kind !== "Reel") return false;
+        if (statusFilter === "STORY" && c.kind !== "Story") return false;
         if (statusFilter === "FORMS" && c.kind !== "Forms") return false;
       }
       return true;

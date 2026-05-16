@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { cn } from "@/server/utils";
 
 // Characters that trigger spreadsheet formula execution
-const FORMULA_LEADING_CHARS = ["=", "+", "-", "@"];
+const FORMULA_PREFIX_RE = /^[\t\r ]*[=+\-@]/;
 
 /**
  * Escapes values for CSV safety
@@ -19,7 +19,7 @@ const escapeCsvValue = (val: any) => {
   let str = String(val ?? "");
 
   // Prevent spreadsheet formula injection by prefixing leading formula chars with a single quote
-  if (FORMULA_LEADING_CHARS.some((char) => str.startsWith(char))) {
+  if (FORMULA_PREFIX_RE.test(str)) {
     str = "'" + str;
   }
 
@@ -73,7 +73,9 @@ export const ExportContactsButton = () => {
       });
 
       // Construct CSV blob and trigger browser download
-      const csvContent = [headers.join(","), ...rows].join("\n");
+      const csvContent = [headers.map(escapeCsvValue).join(","), ...rows].join(
+        "\n",
+      );
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
 

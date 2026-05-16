@@ -21,7 +21,10 @@ export default async function DashboardLayout({
         {workspace.subscriptionStatus === "SOFT_PAUSED" && (
           <SoftPausedBanner />
         )}
-        {children}
+        {/* flex-1 + min-h-0 lets the page fill remaining height; overflow-hidden prevents page-level scroll */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

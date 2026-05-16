@@ -190,6 +190,15 @@ const TableHeader = (props: Props) => {
               </TableFilterMenu>
             );
           }
+        } else if (col.type === "actionBtn") {
+          content = (
+            <span
+              key={col.id}
+              className="text-center text-[16px] font-medium text-[#212121]"
+            >
+              {col.label}
+            </span>
+          );
         }
 
         return (

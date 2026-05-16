@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Invoice } from "../types";
+import { Separator } from "@/components/ui/separator";
 
 interface BillingHistoryProps {
   invoices: Invoice[];
@@ -22,7 +23,7 @@ export function BillingHistory({ invoices }: BillingHistoryProps) {
         History
       </h3>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-4 mt-4">
         {invoices.length === 0 ? (
           <p className="text-slate-400 text-sm italic">
             No transaction history found.
@@ -33,8 +34,8 @@ export function BillingHistory({ invoices }: BillingHistoryProps) {
             const StatusIcon = config.icon;
 
             return (
-              <div key={invoice.id}>
-                <div className="flex items-center justify-between py-4">
+              <div key={invoice.id} className="flex flex-col">
+                <div className="flex justify-between pb-2">
                   <span className="md:text-[15px] text-sm font-medium text-[#111827] font-mono">
                     {invoice.id}
                   </span>
@@ -46,15 +47,13 @@ export function BillingHistory({ invoices }: BillingHistoryProps) {
                       />
                     </div>
                     <span
-                      className={`md:text-[14px] text-sm font-bold ${config.text} capitalize`}
+                      className={`md:text-sm text-sm font-bold ${config.text} capitalize`}
                     >
                       {invoice.status}
                     </span>
                   </div>
                 </div>
-                {index < invoices.length - 1 && (
-                  <div className="h-px w-full bg-[#F3F4F6]" />
-                )}
+                {index !== invoices.length - 1 && <Separator />}
               </div>
             );
           })

@@ -77,7 +77,7 @@ export function NewFormButton() {
             className="opacity-50"
           />
           New Form
-          {maxForms !== -1 && (
+          {typeof maxForms === "number" && maxForms !== -1 && (
             <Image
               src={CrownIcon}
               width={16}
@@ -98,7 +98,12 @@ export function NewFormButton() {
   if (isAtLimit) {
     return (
       <UpgradeTooltip>
-        <div className="relative cursor-not-allowed h-full inline-block">
+        <div
+          className="relative cursor-not-allowed h-full inline-block"
+          tabIndex={0}
+          role="button"
+          aria-disabled="true"
+        >
           {buttonContent}
         </div>
       </UpgradeTooltip>

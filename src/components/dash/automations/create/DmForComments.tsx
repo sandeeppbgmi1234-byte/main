@@ -15,20 +15,14 @@ export default function DMForComments({ onBack }: { onBack: () => void }) {
   const refreshingRef = useRef(false);
 
   // useInfiniteQuery handles batch-by-batch fetching and anti-spam state automatically
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isFetching,
-  } = useInfiniteQuery({
-    queryKey: instagramKeys.infinitePosts(),
-    queryFn: ({ pageParam }) =>
-      instagramService.profile.getUserPosts(false, pageParam),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.result.paging?.cursors?.after,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
+    useInfiniteQuery({
+      queryKey: instagramKeys.infinitePosts(),
+      queryFn: ({ pageParam }) =>
+        instagramService.profile.getUserPosts(false, pageParam),
+      initialPageParam: undefined as string | undefined,
+      getNextPageParam: (lastPage) => lastPage.result.paging?.cursors?.after,
+    });
 
   const handleRefresh = async () => {
     if (refreshingRef.current) return;
@@ -66,7 +60,7 @@ export default function DMForComments({ onBack }: { onBack: () => void }) {
           return (
             <div
               key={item.id}
-              className="aspect-square bg-gray-50 rounded-lg border-2 border-transparent hover:border-purple-600 transition-all cursor-pointer flex items-center justify-center group overflow-hidden relative"
+              className="h-[150px] w-[95px] bg-gray-50 rounded-lg border-2 border-transparent hover:border-purple-600 transition-all cursor-pointer flex items-center justify-center group overflow-hidden relative"
             >
               <Link
                 href={`/dash/automations/new/comments/${item.id}`}
@@ -90,14 +84,12 @@ export default function DMForComments({ onBack }: { onBack: () => void }) {
           <button
             onClick={() => fetchNextPage()}
             disabled={isFetchingNextPage}
-            className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="flex items-center gap-2 px-6 py-2 text-xs font-semibold text-[#6A06E4] hover:text-[#5a05c4] transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             {isFetchingNextPage ? (
               <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
             ) : (
-              <span className="group-hover:translate-y-0.5 transition-transform">
-                Show more posts
-              </span>
+              <span className="capitalize">Show more</span>
             )}
           </button>
         </div>
