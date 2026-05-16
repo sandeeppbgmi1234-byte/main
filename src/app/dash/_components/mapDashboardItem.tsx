@@ -127,10 +127,8 @@ const mapDashboardItem = (data: DashboardItem): MappedDashboardItem => {
         ),
       status: (
         <span
-          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-            form.status === "PUBLISHED"
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-slate-100 text-slate-500"
+          className={`text-base font-semibold px-2 py-0.5 ${
+            form.status === "PUBLISHED" ? "text-[#068E19]" : "text-[#1D81D8]"
           }`}
         >
           {form.status === "PUBLISHED" ? "Live" : "Draft"}

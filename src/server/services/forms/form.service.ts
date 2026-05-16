@@ -212,7 +212,12 @@ export async function submitForm(
     }
   }
 
-  const submission = await createFormSubmission(form.id, input.answers, meta);
+  const submission = await createFormSubmission(
+    form.id,
+    input.answers,
+    meta,
+    form.fields as FormFieldEntry[],
+  );
 
   return {
     submissionId: submission.id,

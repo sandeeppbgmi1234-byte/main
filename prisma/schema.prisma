@@ -247,10 +247,11 @@ model FormSubmission {
   form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   // Keyed by field id — value is string or string[] (for checkbox)
-  answers     Json
-  submittedAt DateTime @default(now())
-  ipAddress   String?
-  userAgent   String?
+  answers        Json
+  submittedAt    DateTime         @default(now())
+  ipAddress      String?
+  userAgent      String?
+  fieldsSnapshot FormFieldEntry[]
 
   @@index([formId, submittedAt(sort: Desc)])
   @@map("form_submissions")

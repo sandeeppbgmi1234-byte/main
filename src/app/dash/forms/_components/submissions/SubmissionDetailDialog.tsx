@@ -32,7 +32,11 @@ export const SubmissionDetailDialog = ({
 }: SubmissionDetailDialogProps) => {
   if (!submission) return null;
 
-  const name = getDisplayName(fields, submission);
+  const activeFields = (
+    submission.fieldsSnapshot?.length ? submission.fieldsSnapshot : fields
+  ) as FormField[];
+
+  const name = getDisplayName(activeFields, submission);
   const initials = getInitials(name);
   const formattedDate = formatDate(submission.submittedAt);
 
@@ -86,7 +90,7 @@ export const SubmissionDetailDialog = ({
             </h3>
 
             <div className="max-h-[320px] overflow-y-auto space-y-3 pr-2 custom-scrollbar">
-              {fields.map((field) => {
+              {activeFields.map((field) => {
                 const answer = submission.answers[field.id] ?? "—";
 
                 return (

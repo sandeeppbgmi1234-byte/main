@@ -10,7 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { formKeys } from "@/keys/react-query";
 import { formService } from "@/api/services/forms";
 import { cn } from "@/server/utils";
-import { CrownIcon } from "lucide-react";
+import CrownIcon from "@/assets/svgs/CrownIcon.svg";
+import { UpgradeTooltip } from "@/components/shared/UpgradeTooltip";
 
 /**
  * NewFormButton Component
@@ -55,29 +56,19 @@ export function NewFormButton() {
 
   const maxForms = gates?.state.maxForms;
 
-  return (
+  const buttonContent = (
     <Button
       className={cn(
         "bg-[#6A06E4] hover:bg-[#5a05c4] h-full",
-        isAtLimit && "opacity-70 cursor-not-allowed grayscale-[0.5]",
+        isAtLimit &&
+          "opacity-80 cursor-not-allowed pointer-events-none select-none",
       )}
       asChild={!isAtLimit}
       disabled={isAtLimit}
       aria-disabled={isAtLimit}
-      title={
-        isAtLimit
-          ? isErrorGates || isErrorForms || !gates || !forms
-            ? "Unable to verify plan limits. Please try again later."
-            : `Free plan allows up to ${maxForms} forms. Upgrade to create more.`
-          : undefined
-      }
     >
       {isAtLimit ? (
-        <span
-          className="h-full flex items-center gap-2"
-          aria-hidden="true"
-          role="presentation"
-        >
+        <span className="h-full flex items-center gap-2">
           <Image
             src={PlusIconSvg}
             alt="add"
@@ -86,7 +77,14 @@ export function NewFormButton() {
             className="opacity-50"
           />
           New Form
-          {maxForms !== -1 && <CrownIcon className="w-4 h-4 opacity-80" />}
+          {maxForms !== -1 && (
+            <Image
+              src={CrownIcon}
+              width={16}
+              height={16}
+              alt="Upgrade required"
+            />
+          )}
         </span>
       ) : (
         <Link href="/dash/forms/new" className="h-full flex items-center gap-2">
@@ -96,4 +94,16 @@ export function NewFormButton() {
       )}
     </Button>
   );
+
+  if (isAtLimit) {
+    return (
+      <UpgradeTooltip>
+        <div className="relative cursor-not-allowed h-full inline-block">
+          {buttonContent}
+        </div>
+      </UpgradeTooltip>
+    );
+  }
+
+  return buttonContent;
 }

@@ -9,11 +9,21 @@ import { contactKeys } from "@/keys/react-query";
 import { toast } from "sonner";
 import { cn } from "@/server/utils";
 
+// Characters that trigger spreadsheet formula execution
+const FORMULA_LEADING_CHARS = ["=", "+", "-", "@"];
+
 /**
  * Escapes values for CSV safety
  */
 const escapeCsvValue = (val: any) => {
-  const str = String(val ?? "");
+  let str = String(val ?? "");
+
+  // Prevent spreadsheet formula injection by prefixing leading formula chars with a single quote
+  if (FORMULA_LEADING_CHARS.some((char) => str.startsWith(char))) {
+    str = "'" + str;
+  }
+
+  // Escape internal double quotes for valid CSV formatting
   return `"${str.replace(/"/g, '""')}"`;
 };
 
