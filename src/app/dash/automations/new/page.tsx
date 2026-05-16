@@ -56,7 +56,7 @@ const NewAutomationPage = () => {
         <CreateAutomationModal>
           <button
             type="button"
-            className="mt-1 w-fit flex items-center gap-3 bg-[#7c3aed] hover:bg-[#6d28d9] active:bg-[#5b21b6] text-white font-semibold text-[0.95rem] px-6 py-3.5 rounded-md transition-all duration-200 cursor-pointer"
+            className="w-fit mt-1 text-base font-bold flex items-center gap-3 bg-[#7c3aed] hover:bg-[#6d28d9] active:bg-[#5b21b6] text-white text-[0.95rem] px-6 py-3.5 rounded-md transition-all duration-200 cursor-pointer"
           >
             <PlusIcon />
             Start Automating

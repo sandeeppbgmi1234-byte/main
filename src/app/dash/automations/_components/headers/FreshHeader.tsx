@@ -76,11 +76,7 @@ export default function FreshHeader({
           </>
         ) : (
           <>
-            <Image
-              alt="Go live"
-              src={AntennaIcon}
-              className="w-5 h-5 text-white"
-            />
+            <Image alt="" src={AntennaIcon} className="w-5 h-5 text-white" />
             <span className="ml-1 font-bold whitespace-nowrap">Go Live</span>
           </>
         )}

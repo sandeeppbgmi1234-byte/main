@@ -26,7 +26,7 @@ export function DashboardCard({
       )}
     >
       {/* Header section with title and optional action (dropdown, link, etc) */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center">
         <h3 className="text-[#071329] font-semibold text-[16px] tracking-tight">
           {title}
         </h3>

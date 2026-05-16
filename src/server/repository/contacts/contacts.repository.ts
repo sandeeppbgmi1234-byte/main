@@ -1,12 +1,12 @@
 /**
  * Contacts Repository
- * Data access layer for derived Contact information from AutomationExecutions
+ * Data access layer for derived Contact information from AutomationExecutions and FormSubmissions
  */
 
 import { prisma } from "@/server/db";
 import { executeWithErrorHandling } from "../repository-utils";
 
-// Fetches unique contacts derived from executions in a specific workspace
+// Fetches unique contacts derived from executions and form submissions in a specific workspace
 export async function getUniqueContactsForWorkspace(
   instaAccountId: string,
   limit: number = 20,
@@ -16,7 +16,8 @@ export async function getUniqueContactsForWorkspace(
   return executeWithErrorHandling(
     async () => {
       const normalizedQuery = query?.trim();
-      // Fetch unique contacts using Prisma's distinct feature for efficient pagination
+
+      // Fetch unique contacts from automation executions
       const executions = await prisma.automationExecution.findMany({
         where: {
           automation: { instaAccountId },
@@ -29,42 +30,44 @@ export async function getUniqueContactsForWorkspace(
               }
             : {}),
         },
-        // We use distinct on senderId to ensure each contact appears once
         distinct: ["senderId"],
         include: {
           automation: {
             select: {
               triggerType: true,
+              post: true,
             },
           },
         },
         orderBy: {
           executedAt: "desc",
-        },
-        // Fetch one extra to determine if there are more results
-        take: limit + 1,
-        // Use the execution ID as the cursor
+        }, take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
-        // Skip the cursor itself when requesting the next page
         skip: cursor ? 1 : 0,
       });
 
-      // Interface for normalized contact data
-      interface RepositoryContact {
-        id: string; // The senderId
-        username: string;
-        avatarUrl: string;
-        type: "Post" | "Reel" | "Story";
-        email: null;
-        lastInteractedAt: Date;
-        lastExecutionId: string; // Stored to serve as the next cursor
-      }
+      // Fetch form submissions for the workspace
+      const formSubmissions = await prisma.formSubmission.findMany({
+        where: {
+          form: { instaAccountId },
+        },
+        include: {
+          form: {
+            select: { id: true },
+          },
+        },
+        orderBy: {
+          submittedAt: "desc",
+        }, take: limit + 1,
+      });
 
       // Map the executions to the normalized contact format
-      const contacts: any[] = executions.slice(0, limit).map((execution) => {
-        let kind: "Post" | "Reel" | "Story" = "Post";
+      const executionContacts: any[] = executions.slice(0, limit).map((execution) => {
+        let kind: "Post" | "Reel" | "Story" | "Forms" = "Post";
         if (execution.automation.triggerType === "STORY_REPLY") {
           kind = "Story";
+        } else if (execution.automation.post?.mediaType === "VIDEO") {
+          kind = "Reel";
         }
 
         return {
@@ -79,9 +82,42 @@ export async function getUniqueContactsForWorkspace(
         };
       });
 
-      // Determine the cursor for the next page
+      // Map form submissions to normalized contact format
+      const formContacts: any[] = formSubmissions.slice(0, limit).map((sub) => {
+        const fields = Array.isArray(sub.fieldsSnapshot) ? sub.fieldsSnapshot : [];
+        const answers: any = sub.answers || {};
+
+        // Find display name field matching common name identifiers
+        const nameField = fields.find((f: any) =>
+          /name|user|full|first|sender/i.test(f?.label || ""),
+        );
+        const displayName =
+          nameField && answers[nameField.id]
+            ? String(answers[nameField.id])
+            : "Unknown User";
+
+        return {
+          type: "contact",
+          id: sub.id,
+          username: displayName,
+          avatarUrl: "",
+          kind: "Forms",
+          email: null,
+          lastInteractedAt: sub.submittedAt,
+          lastExecutionId: sub.id,
+          formId: sub.formId,
+        };
+      });
+
+      // Combine both sources, sort by date descending, and slice top limit
+      const allContacts = [...executionContacts, ...formContacts];
+      allContacts.sort(
+        (a, b) => b.lastInteractedAt.getTime() - a.lastInteractedAt.getTime(),
+      );
+
+      const contacts = allContacts.slice(0, limit);
       const nextCursor =
-        executions.length > limit ? executions[limit].id : undefined;
+        allContacts.length > limit ? allContacts[limit].lastExecutionId : undefined;
 
       return {
         contacts,

@@ -26,6 +26,7 @@ export interface TableRowUIProps {
   stats: string | number;
   date: React.ReactNode;
   actions: React.ReactNode;
+  actionBtn?: React.ReactNode;
   className?: string;
   newFollowersGained: number;
 }
@@ -43,6 +44,7 @@ const TableRowUI = ({
   stats,
   date,
   actions,
+  actionBtn,
   className = "",
   newFollowersGained,
 }: TableRowUIProps) => {
@@ -126,6 +128,8 @@ const TableRowUI = ({
               {date}
             </span>
           );
+        } else if (col.type === "actionBtn") {
+          content = <div className="flex justify-center">{actionBtn}</div>;
         } else if (col.type === "actions") {
           content = <div className="flex justify-end">{actions}</div>;
         }
@@ -191,19 +195,19 @@ const TableRow = ({ data, variant }: TableRowProps) => {
 
   const slug = isForm ? data.slug : undefined;
 
+  const actionBtn = isForm ? (
+    <button
+      onClick={copyToClipboard}
+      disabled={!slug}
+      className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md text-[#6A06E5] hover:bg-purple-50 transition-colors text-sm font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <Copy size={14} />
+      Copy
+    </button>
+  ) : null;
+
   const actions = (
     <div className="relative flex items-center gap-2 justify-end">
-      {isForm && (
-        <button
-          onClick={copyToClipboard}
-          disabled={!slug}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[#6A06E5] hover:bg-purple-50 transition-colors text-sm font-medium whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Copy size={14} />
-          Copy
-        </button>
-      )}
-
       {(isForm || isAutomation) && (
         <div className="relative">
           <button
@@ -242,6 +246,7 @@ const TableRow = ({ data, variant }: TableRowProps) => {
       stats={mapped.stats}
       newFollowersGained={mapped.newFollowersGained || 0}
       date={mapped.date}
+      actionBtn={actionBtn}
       actions={actions}
     />
   );

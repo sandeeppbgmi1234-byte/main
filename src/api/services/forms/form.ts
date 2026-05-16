@@ -36,6 +36,7 @@ export type FormSubmission = {
   id: string;
   answers: Record<string, string | string[]>;
   submittedAt: string;
+  fieldsSnapshot?: FormField[];
 };
 
 // Returned on successful form save

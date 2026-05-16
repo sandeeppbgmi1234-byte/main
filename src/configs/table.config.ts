@@ -21,12 +21,13 @@ export const TABLE_CONFIGS = {
   },
   forms: {
     title: "Forms",
-    gridClass: "grid-cols-[2fr_1fr_1fr_1fr__1fr_auto]",
+    gridClass: "grid-cols-[2fr_1fr_1fr_1fr_1fr_auto]",
     columns: [
       { id: "title", label: "Forms", type: "main" },
       { id: "count", label: "Submissions", type: "info", sortable: true },
       { id: "status", label: "Status", type: "status" },
       { id: "date", label: "Last Published", type: "date", sortable: true },
+      { id: "actionBtn", label: "", type: "actionBtn" },
       { id: "actions", label: "", type: "actions" },
     ],
   },

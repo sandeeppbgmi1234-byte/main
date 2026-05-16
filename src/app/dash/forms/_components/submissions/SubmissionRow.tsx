@@ -21,7 +21,10 @@ export const SubmissionRow = ({
   fields,
   onClick,
 }: SubmissionRowProps) => {
-  const name = getDisplayName(fields, submission);
+  const activeFields = (
+    submission.fieldsSnapshot?.length ? submission.fieldsSnapshot : fields
+  ) as FormField[];
+  const name = getDisplayName(activeFields, submission);
   const formattedDate = formatDate(submission.submittedAt);
 
   return (

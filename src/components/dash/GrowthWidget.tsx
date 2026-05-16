@@ -25,7 +25,7 @@ const WIDGET_CONFIGS = {
     showTrendIndicator: true,
   },
   outreach: {
-    title: "Outreach Impact",
+    title: "Messages",
     queryKeyFn: statsKeys.outreachImpact,
     queryFn: statsService.getOutreachImpact,
     extractMetric: (data: any) => data?.count ?? 0,

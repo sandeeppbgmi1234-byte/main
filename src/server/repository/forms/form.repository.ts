@@ -146,6 +146,7 @@ export async function createFormSubmission(
   formId: string,
   answers: Record<string, string | string[] | null>,
   meta: { ipAddress?: string; userAgent?: string },
+  fieldsSnapshot: any[] = [],
 ): Promise<FormSubmission> {
   const [submission] = await prisma.$transaction([
     prisma.formSubmission.create({
@@ -154,6 +155,7 @@ export async function createFormSubmission(
         answers,
         ipAddress: meta.ipAddress ?? null,
         userAgent: meta.userAgent ?? null,
+        fieldsSnapshot,
       },
     }),
     prisma.form.update({

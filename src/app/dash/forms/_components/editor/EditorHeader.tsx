@@ -117,7 +117,7 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
 
               {/* Status Indicator / Go Live Button */}
               {currentStatus === "PUBLISHED" ? (
-                <div className="h-10 px-6 rounded-sm border border-[#4ADE80] text-[#15803D] text-[15px] font-bold flex items-center justify-center shrink-0 bg-[#CCFFD9] shadow-sm">
+                <div className="h-10 px-6 rounded-sm border border-[#7CFF8E] text-[#009C16] text-base font-bold flex items-center justify-center shrink-0 bg-[#BCFFC6] shadow-sm">
                   Live
                 </div>
               ) : (

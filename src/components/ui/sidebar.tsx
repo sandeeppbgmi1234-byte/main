@@ -139,7 +139,8 @@ function SidebarProvider({
             } as React.CSSProperties
           }
           className={cn(
-            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
+            // Fixed to viewport height so all h-full children get a real bounded parent
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex h-svh overflow-hidden w-full",
             className,
           )}
           {...props}
@@ -310,7 +311,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "bg-background relative flex w-full flex-1 flex-col transition-all duration-300 ease-in-out",
+        // overflow-hidden ensures scrollable children (e.g. automation editor columns) stay within bounds
+        "bg-background relative flex w-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-in-out",
         "md:peer-data-[variant=inset]:m-4 md:peer-data-[variant=inset]:rounded-[21px] md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-4",
         className,
       )}

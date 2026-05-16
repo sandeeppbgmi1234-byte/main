@@ -1,17 +1,23 @@
 import { FormSubmission } from "@/api/services/forms/form";
 import type { FormField } from "@dm-broo/common-types";
 
+// Characters that trigger spreadsheet formula execution
+const FORMULA_PREFIX_RE = /^[\t\r ]*[=+\-@]/;
+
 /**
- * Escapes values for CSV safety to handle commas and quotes
+ * Escapes values for CSV safety to handle commas, quotes, and formula injection
  */
 const escapeCsvValue = (val: any) => {
-  const str = String(val ?? "");
+  let str = String(val ?? "");
+  if (FORMULA_PREFIX_RE.test(str)) {
+    str = "'" + str;
+  }
   return `"${str.replace(/"/g, '""')}"`;
 };
 
 /**
  * Transforms form submission data into a CSV string and triggers a browser download
- * Handles dynamic field mapping based on the form's field definitions
+ * Handles dynamic field mapping across all historical fields snapshots
  */
 export const downloadSubmissionsCSV = (
   submissions: FormSubmission[],
@@ -20,15 +26,35 @@ export const downloadSubmissionsCSV = (
 ) => {
   if (!submissions.length) return;
 
-  // 1. Prepare Headers (Submission metadata + Dynamic Field Labels)
+  // 1. Collect all unique fields across live schema and all submission snapshots
+  // Using Map preserves insertion order and deduplicates by field id
+  const uniqueFieldsMap = new Map<string, FormField>();
+
+  // Add live fields first (so current fields appear first/in order)
+  fields.forEach((f) => uniqueFieldsMap.set(f.id, f));
+
+  // Add any historical fields from submission snapshots
+  submissions.forEach((sub) => {
+    if (sub.fieldsSnapshot && Array.isArray(sub.fieldsSnapshot)) {
+      sub.fieldsSnapshot.forEach((f) => {
+        if (!uniqueFieldsMap.has(f.id)) {
+          uniqueFieldsMap.set(f.id, f);
+        }
+      });
+    }
+  });
+
+  const allUniqueFields = Array.from(uniqueFieldsMap.values());
+
+  // 2. Prepare Headers (Submission metadata + Dynamic Field Labels)
   const headers = [
     "Submission ID",
     "Date",
-    ...fields.map((f) => f.label || f.type),
+    ...allUniqueFields.map((f) => f.label || f.type),
   ];
-  const fieldIds = fields.map((f) => f.id);
+  const fieldIds = allUniqueFields.map((f) => f.id);
 
-  // 2. Prepare Data Rows
+  // 3. Prepare Data Rows
   const rows = submissions.map((sub) => {
     const values = [
       sub.id,
@@ -42,8 +68,10 @@ export const downloadSubmissionsCSV = (
     return values.map(escapeCsvValue).join(",");
   });
 
-  // 3. Construct CSV and trigger download
-  const csvContent = [headers.join(","), ...rows].join("\n");
+  // 4. Construct CSV and trigger download
+  const csvContent = [headers.map(escapeCsvValue).join(","), ...rows].join(
+    "\n",
+  );
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
 

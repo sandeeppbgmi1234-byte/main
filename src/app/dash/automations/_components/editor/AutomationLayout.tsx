@@ -167,12 +167,12 @@ export function AutomationLayout({
             </div>
           </div>
         ) : (
-          <div className="justify-center flex-1 min-h-0 grid grid-cols-[minmax(250px,280px)_1fr_minmax(250px,280px)] gap-4 p-4 overflow-hidden">
+          <div className="justify-center flex-1 min-h-0 flex gap-12 m-24 p-4 overflow-hidden">
             <div className="flex flex-col gap-3 overflow-y-auto h-full custom-scrollbar">
               {leftCol}
             </div>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center basis-3xs">
               <div className="relative w-full max-w-[280px] flex items-start justify-center">
                 {renderMedia()}
               </div>

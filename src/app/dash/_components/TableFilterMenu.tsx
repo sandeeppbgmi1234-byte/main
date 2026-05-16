@@ -12,7 +12,8 @@ import { TableVariant } from "@/configs/table.config";
 
 export type AutomationStatus = "ACTIVE" | "STOPPED" | "EXPIRED";
 export type FormStatus = "PUBLISHED" | "DRAFT";
-export type ContactStatus = "POST" | "REEL" | "STORY";
+// Contact status types for filtering
+export type ContactStatus = "POST" | "REEL" | "STORY" | "FORMS";
 
 export type StatusFilterMap = {
   automations: AutomationStatus;
@@ -41,10 +42,12 @@ export function getStatusOptions<V extends TableVariant>(
     ];
   }
   if (variant === "contacts") {
+    // Filter options for contacts table
     return [
       { label: "Post", value: "POST" as StatusFilterMap[V] },
       { label: "Reel", value: "REEL" as StatusFilterMap[V] },
       { label: "Story", value: "STORY" as StatusFilterMap[V] },
+      { label: "Forms", value: "FORMS" as StatusFilterMap[V] },
     ];
   }
   return [
