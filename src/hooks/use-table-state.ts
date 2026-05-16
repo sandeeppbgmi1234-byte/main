@@ -40,7 +40,7 @@ export function useTableState<T extends { id: string }, F = string>({
     let result = [...data];
 
     // Filter
-    if (search && filterFn) {
+    if (filterFn) {
       result = result.filter((item) => filterFn(item, search));
     }
 

@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import React from "react";
 import ColHeader from "./ColHeader";
 import { TABLE_CONFIGS, TableVariant } from "@/configs/table.config";
@@ -81,7 +81,26 @@ const TableHeader = (props: Props) => {
             </span>
           );
         } else if (col.type === "status") {
-          if ((col as { sortable?: boolean }).sortable) {
+          if (variant === "contacts" && col.id === "type") {
+            content = (
+              <TableFilterMenu
+                key={col.id}
+                variant="contacts"
+                statusFilter={props.statusFilter}
+                onStatusChange={props.setStatusFilter}
+              >
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-2 text-[16px] font-medium text-[#212121] hover:text-[#6A06E4] transition-colors cursor-pointer"
+                >
+                  {col.label}
+                  <div className="p-1 rounded-sm transition-colors bg-[#212121] text-white">
+                    <ChevronDown size={12} />
+                  </div>
+                </button>
+              </TableFilterMenu>
+            );
+          } else if ((col as { sortable?: boolean }).sortable) {
             content = (
               <ColHeader
                 key={col.id}

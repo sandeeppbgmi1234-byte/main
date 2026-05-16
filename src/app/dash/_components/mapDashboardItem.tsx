@@ -149,7 +149,10 @@ const mapDashboardItem = (data: DashboardItem): MappedDashboardItem => {
     id: contact.id,
     title: contact.username,
     subtitle: "",
-    href: null,
+    href:
+      contact.kind === "Forms" && contact.formId
+        ? `/dash/forms/${contact.formId}/submissions`
+        : null,
     image: contact.avatarUrl ? (
       <Image
         src={contact.avatarUrl}
@@ -162,7 +165,7 @@ const mapDashboardItem = (data: DashboardItem): MappedDashboardItem => {
       <User className="w-4 h-4 text-slate-300" strokeWidth={2.5} />
     ),
     status: (
-      <span className="text-[16px] text-center font-semibold text-purple-600">
+      <span className="text-base text-center font-semibold text-[#6A06E4]">
         {contact.kind}
       </span>
     ),

@@ -52,8 +52,9 @@ const ContactsPage = () => {
 
       // Status Filter
       if (statusFilter !== "ALL") {
-        // Here we would filter by platform/media type if applicable,
-        // but for now we follow the pattern
+        if (statusFilter === "POST" && c.kind !== "Post") return false;
+        if (statusFilter === "REEL" && c.kind !== "Reel") return false;
+        if (statusFilter === "FORMS" && c.kind !== "Forms") return false;
       }
       return true;
     },

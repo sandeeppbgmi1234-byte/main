@@ -3,9 +3,10 @@ export type Contact = {
   id: string;
   avatarUrl: string;
   username: string;
-  kind: "Post" | "Reel" | "Story";
+  kind: "Post" | "Reel" | "Story" | "Forms";
   email: string | null;
   lastInteractedAt: string;
+  formId?: string;
 };
 
 export interface ContactsListResponse {
