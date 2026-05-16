@@ -85,7 +85,7 @@ export default function CreateAutomationDialog({ title }: { title: string }) {
   const hasAutomations = automations.length > 0;
 
   const buttonClass = cn(
-    "w-auto bg-[#6A06E4] hover:bg-[#5a05c4] text-white px-6 py-2 transition-all font-medium border-none outline-none h-full flex items-center gap-2",
+    "w-full md:w-fit bg-[#6A06E4] hover:bg-[#5a05c4] text-white px-6 py-2 transition-all font-medium border-none outline-none h-full flex items-center gap-2",
     isPending && !data && "opacity-70 cursor-wait",
   );
 

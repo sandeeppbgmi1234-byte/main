@@ -11,6 +11,7 @@ import { MoreVertical, Copy } from "lucide-react";
 import { toast } from "sonner";
 import mapDashboardItem from "./mapDashboardItem";
 import { TABLE_CONFIGS, TableVariant } from "@/configs/table.config";
+import { Separator } from "@/components/ui/separator";
 
 /**
  * Props for the dumb UI component.
@@ -53,10 +54,19 @@ const TableRowUI = ({
     >
       {config.columns.map((col) => {
         const colId = col.id as string;
+        const isAutomation = variant === "automations";
+        const isForm = variant === "forms";
+        const isContact = variant === "contacts";
+        const hasSeparator =
+          (isAutomation && ["followers", "status", "count"].includes(col.id)) ||
+          (isForm && ["count", "status"].includes(col.id)) ||
+          (isContact && ["type", "email"].includes(col.id));
+
+        let content = null;
 
         if (col.type === "main") {
-          return (
-            <div key={col.id} className="flex items-center gap-3 min-w-0">
+          content = (
+            <div className="flex items-center gap-3 min-w-0">
               <div className="w-8 h-8 rounded-md bg-slate-50 shrink-0 flex items-center justify-center overflow-hidden border border-slate-100">
                 {icon}
               </div>
@@ -88,54 +98,58 @@ const TableRowUI = ({
               )}
             </div>
           );
-        }
+        } else if (col.type === "info") {
+          let infoContent: React.ReactNode = stats;
+          if (colId === "type") infoContent = status;
+          if (colId === "followers" || (isForm && colId === "count")) {
+            infoContent = (
+              <span className="text-[#6A06E4] font-medium">
+                {colId === "followers" ? newFollowersGained : stats}
+              </span>
+            );
+          }
 
-        if (col.type === "info") {
-          let content: React.ReactNode = stats;
-          if (colId === "type") content = status;
-          if (colId === "followers") content = newFollowersGained;
-
-          return (
-            <span
-              key={colId}
-              className="text-center text-[16px] font-medium text-[#212121] truncate"
-            >
-              {content}
+          content = (
+            <span className="text-center text-[16px] font-medium text-[#212121] truncate">
+              {infoContent}
             </span>
           );
-        }
-
-        if (col.type === "status") {
-          return (
-            <div
-              key={col.id}
-              className="flex items-center justify-center gap-2 overflow-hidden"
-            >
+        } else if (col.type === "status") {
+          content = (
+            <div className="flex items-center justify-center gap-2 overflow-hidden">
               {status}
             </div>
           );
-        }
-
-        if (col.type === "date") {
-          return (
-            <span
-              key={col.id}
-              className="text-center text-sm text-slate-500 whitespace-nowrap"
-            >
+        } else if (col.type === "date") {
+          content = (
+            <span className="text-center text-sm text-slate-500 whitespace-nowrap">
               {date}
             </span>
           );
+        } else if (col.type === "actions") {
+          content = <div className="flex justify-end">{actions}</div>;
         }
 
-        if (col.type === "actions") {
-          return (
-            <div key={col.id} className="flex justify-end">
-              {actions}
+        return (
+          <div
+            key={col.id}
+            className="flex items-center justify-center relative h-full"
+          >
+            <div
+              className={`flex-1 flex ${col.type === "main" ? "justify-start" : "justify-center"}`}
+            >
+              {content}
             </div>
-          );
-        }
-
-        return null;
+            {hasSeparator && (
+              <div className="absolute -right-2 h-4 flex items-center">
+                <Separator
+                  orientation="vertical"
+                  className="bg-slate-900 w-2"
+                />
+              </div>
+            )}
+          </div>
+        );
       })}
     </div>
   );

@@ -91,13 +91,16 @@ export const FormEditorProvider = ({
     onSuccess: (result, variables) => {
       toast.success(
         variables.status === "PUBLISHED"
-          ? `Published! Public URL: /f/${result.slug}`
-          : "Saved successfully.",
+          ? `Form published successfully`
+          : "Form paused. Responses will no longer be accepted.",
       );
       queryClient.invalidateQueries({ queryKey: formKeys.all });
       if (isExisting) {
         queryClient.invalidateQueries({ queryKey: formKeys.detail(formId!) });
       }
+
+      // Reset dirty state
+      methods.reset(methods.getValues());
 
       // If it was a new form, redirect to its editor page
       if (!isExisting && result.id) {

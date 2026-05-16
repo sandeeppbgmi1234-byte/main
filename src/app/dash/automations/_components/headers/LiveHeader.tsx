@@ -16,6 +16,7 @@ interface LiveHeaderProps {
   isMobile?: boolean; // Layout adaptation
   isNameDialogOpen?: boolean; // Controlled name popup
   setIsNameDialogOpen?: (open: boolean) => void;
+  isDirty?: boolean;
 }
 
 export default function LiveHeader({
@@ -31,6 +32,7 @@ export default function LiveHeader({
   isMobile = false,
   isNameDialogOpen,
   setIsNameDialogOpen,
+  isDirty = false,
 }: LiveHeaderProps) {
   const automationName = automation.automationName ?? "";
   const isActive = automation.status === "ACTIVE";
@@ -65,7 +67,7 @@ export default function LiveHeader({
 
       {/* Action buttons matching mobile square specs */}
       <div className="flex items-center gap-2 shrink-0">
-        {isActive && (
+        {isActive && isDirty && (
           <Button
             type="submit"
             disabled={isUpdating || isMediaUploading}

@@ -64,7 +64,7 @@ export const MobileEditorHeader = ({ activeTab }: MobileEditorHeaderProps) => {
 
             <Button
               size="icon"
-              disabled={!form?.slug}
+              disabled={!form?.slug || !isPublished}
               className="h-full w-[52px] rounded-md bg-[#0F172A] hover:bg-[#1E293B] text-white shrink-0 border-none transition-all active:scale-95 disabled:opacity-40"
               onClick={handleCopyLink}
             >

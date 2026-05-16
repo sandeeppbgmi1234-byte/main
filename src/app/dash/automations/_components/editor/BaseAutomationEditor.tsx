@@ -142,6 +142,7 @@ export function BaseAutomationEditor<
         isMobile={isMobile}
         isNameDialogOpen={isNameDialogOpen}
         setIsNameDialogOpen={setIsNameDialogOpen}
+        isDirty={form.formState.isDirty}
       />
     ) : (
       <FreshHeader
@@ -167,7 +168,7 @@ export function BaseAutomationEditor<
           className="flex flex-col flex-1 overflow-hidden"
         >
           <div
-            className={`flex flex-col h-full gap-4 ${isMobile ? "pt-4" : "pt-0"}`}
+            className={`flex flex-col flex-1 min-h-0 gap-4 ${isMobile ? "pt-4" : "pt-0"}`}
           >
             <AutomationLayout
               header={header}

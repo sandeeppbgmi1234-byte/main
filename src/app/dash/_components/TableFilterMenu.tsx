@@ -115,7 +115,7 @@ export const TableFilterMenu = <V extends TableVariant>({
               key={opt.value}
               checked={triggerFilter === opt.value}
               onCheckedChange={() => toggleTrigger(opt.value)}
-              className="cursor-pointer font-medium text-slate-500 data-[state=checked]:text-[#6A06E4]"
+              className="cursor-pointer font-medium text-[#212121] data-[state=checked]:text-[#6A06E4]"
             >
               {opt.label}
             </DropdownMenuCheckboxItem>
@@ -127,7 +127,7 @@ export const TableFilterMenu = <V extends TableVariant>({
             key={opt.value}
             checked={statusFilter === opt.value}
             onCheckedChange={() => toggleStatus(opt.value)}
-            className="cursor-pointer font-medium text-slate-500 data-[state=checked]:text-[#6A06E4]"
+            className="cursor-pointer font-medium text-[#212121] data-[state=checked]:text-[#6A06E4]"
           >
             {opt.label}
           </DropdownMenuCheckboxItem>

@@ -1,4 +1,4 @@
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, Pencil, Check } from "lucide-react";
 import { AutomationInput } from "./AutomationInput";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { useFeatureGates } from "@/hooks/use-feature-gates";
@@ -29,9 +29,7 @@ const AskToFollow = ({
         {/* Header with toggle */}
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center justify-center gap-2">
-            <h3 className="text-sm font-semibold text-slate-800">
-              {ASK_TO_FOLLOW_CONFIG.TITLE}
-            </h3>
+            <h3 className="text-sm font-bold text-slate-800">Ask to Follow</h3>
             {isLocked && (
               <Image
                 src={CrownIcon}
@@ -59,15 +57,32 @@ const AskToFollow = ({
               placeholder="Enter follow message..."
             />
 
-            {/* Static visit profile indicator */}
-            <div className="flex items-center justify-between bg-[#F5F3FF] rounded-lg px-4 py-3 border border-purple-50 group transition-all hover:bg-[#EDE9FE]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-[#6A06E4]">
-                  <LinkIcon size={16} />
+            {/* Static visit profile and following indicators */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between bg-[#F5F3FF] rounded-lg px-4 py-3 border border-purple-50 group transition-all hover:bg-[#EDE9FE]">
+                <div className="flex items-center gap-3">
+                  <LinkIcon size={18} className="text-[#6A06E4]" />
+                  <span className="text-[16px] font-medium text-[#071329]">
+                    Visit Profile
+                  </span>
                 </div>
-                <span className="text-sm font-semibold text-[#4F46E5]">
-                  Visit Profile
-                </span>
+                <div className="w-8 h-8 rounded-md  flex items-center justify-center text-[#6A06E4]">
+                  <Pencil size={16} />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between bg-[#F5F3FF] rounded-lg px-4 py-3 border border-purple-50 group transition-all hover:bg-[#EDE9FE]">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full bg-[#6A06E4] flex items-center justify-center text-white">
+                    <Check size={12} strokeWidth={3} />
+                  </div>
+                  <span className="text-[16px] font-medium text-[#071329]">
+                    I&apos;m following
+                  </span>
+                </div>
+                <div className="w-8 h-8 rounded-md  flex items-center justify-center text-[#6A06E4]">
+                  <Pencil size={16} />
+                </div>
               </div>
             </div>
           </div>

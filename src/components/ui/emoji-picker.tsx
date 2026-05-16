@@ -39,7 +39,7 @@ export function EmojiPicker({
           type="button"
           className={`text-slate-400 hover:text-[#6A06E4] transition-all p-1.5 hover:bg-purple-50 rounded-lg shrink-0 ${className}`}
         >
-          <SmilePlus size={size} />
+          <SmilePlus size={size} className="text-black" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

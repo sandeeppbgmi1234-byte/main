@@ -8,8 +8,9 @@ import {
   StatusFilterMap,
   TriggerFilter,
 } from "./TableFilterMenu";
+import { Separator } from "@/components/ui/separator";
 
-export type SortField = "count" | "date" | "newFollowers";
+export type SortField = "count" | "date" | "newFollowers" | "type";
 export type SortOrder = "asc" | "desc" | null;
 
 interface BaseProps<V extends TableVariant> {
@@ -44,11 +45,22 @@ const TableHeader = (props: Props) => {
 
   return (
     <div
-      className={`grid ${config.gridClass} hidden md:grid items-center p-4 gap-4 border-b border-slate-100 m-4 bg-[#F9F9F9] rounded-lg`}
+      className={`grid ${config.gridClass} hidden md:grid items-center px-4 py-3 gap-4 border-b border-slate-100 m-4 bg-[#F9F9F9] rounded-lg relative`}
     >
       {config.columns.map((col: TableColumn) => {
+        const isAutomation = variant === "automations";
+        const isForm = variant === "forms";
+        const isContact = variant === "contacts";
+        // Show separator after these columns in respective variants
+        const hasSeparator =
+          (isAutomation && ["followers", "status", "count"].includes(col.id)) ||
+          (isForm && ["count", "status"].includes(col.id)) ||
+          (isContact && ["type", "email"].includes(col.id));
+
+        let content = null;
+
         if (col.type === "main") {
-          return (
+          content = (
             <span
               key={col.id}
               className="text-[16px] font-medium text-[#212121]"
@@ -56,10 +68,11 @@ const TableHeader = (props: Props) => {
               {col.label}
             </span>
           );
-        }
-
-        if (col.type === "info" && !(col as { sortable?: boolean }).sortable) {
-          return (
+        } else if (
+          col.type === "info" &&
+          !(col as { sortable?: boolean }).sortable
+        ) {
+          content = (
             <span
               key={col.id}
               className="text-center text-[16px] font-medium text-[#212121]"
@@ -67,26 +80,36 @@ const TableHeader = (props: Props) => {
               {col.label}
             </span>
           );
-        }
-
-        if (col.type === "status") {
-          return (
-            <span
-              key={col.id}
-              className="text-center text-[16px] font-medium text-[#212121]"
-            >
-              {col.label}
-            </span>
-          );
-        }
-
-        if (col.type === "info" || col.type === "date") {
+        } else if (col.type === "status") {
+          if ((col as { sortable?: boolean }).sortable) {
+            content = (
+              <ColHeader
+                key={col.id}
+                label={col.label}
+                sortable={true}
+                sortOrder={
+                  props.sortField === (col.id as any) ? props.sortOrder : null
+                }
+                onSort={() => props.onSort?.(col.id as any)}
+              />
+            );
+          } else {
+            content = (
+              <span
+                key={col.id}
+                className="text-center text-[16px] font-medium text-[#212121]"
+              >
+                {col.label}
+              </span>
+            );
+          }
+        } else if (col.type === "info" || col.type === "date") {
           const field =
             (col.id as string) === "followers"
               ? "newFollowers"
               : (col.id as "count" | "date");
 
-          return (
+          content = (
             <ColHeader
               key={col.id}
               label={col.label}
@@ -95,11 +118,13 @@ const TableHeader = (props: Props) => {
               onSort={() => props.onSort?.(field)}
             />
           );
-        }
-
-        if (col.type === "actions") {
+        } else if (col.type === "actions") {
           if (props.variant === "automations") {
-            return (
+            const activeFilterCount =
+              (props.statusFilter !== "ALL" ? 1 : 0) +
+              (props.triggerFilter !== "ALL" ? 1 : 0);
+
+            content = (
               <TableFilterMenu
                 key={col.id}
                 variant="automations"
@@ -111,15 +136,20 @@ const TableHeader = (props: Props) => {
                 <button
                   type="button"
                   aria-label="Open filters"
-                  className="p-2 bg-slate-800 text-white rounded-md w-fit justify-self-end cursor-pointer hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                  className="p-2 bg-[#212121] text-white rounded-md w-fit justify-self-end cursor-pointer hover:bg-slate-700 transition-colors focus:outline-none relative"
                 >
-                  <SlidersHorizontal size={14} />
+                  <SlidersHorizontal size={16} />
+                  {activeFilterCount > 0 && (
+                    <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#6A06E4] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                      {activeFilterCount}
+                    </div>
+                  )}
                 </button>
               </TableFilterMenu>
             );
-          }
-          if (props.variant === "forms") {
-            return (
+          } else if (props.variant === "forms") {
+            const activeFilterCount = props.statusFilter !== "ALL" ? 1 : 0;
+            content = (
               <TableFilterMenu
                 key={col.id}
                 variant="forms"
@@ -129,34 +159,40 @@ const TableHeader = (props: Props) => {
                 <button
                   type="button"
                   aria-label="Open filters"
-                  className="p-2 bg-slate-800 text-white rounded-md w-fit justify-self-end cursor-pointer hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                  className="p-2 bg-[#212121] text-white rounded-md w-fit justify-self-end cursor-pointer hover:bg-slate-700 transition-colors focus:outline-none relative"
                 >
-                  <SlidersHorizontal size={14} />
-                </button>
-              </TableFilterMenu>
-            );
-          }
-          if (props.variant === "contacts") {
-            return (
-              <TableFilterMenu
-                key={col.id}
-                variant="contacts"
-                statusFilter={props.statusFilter}
-                onStatusChange={props.setStatusFilter}
-              >
-                <button
-                  type="button"
-                  aria-label="Open filters"
-                  className="p-2 bg-slate-800 text-white rounded-md w-fit justify-self-end cursor-pointer hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
-                >
-                  <SlidersHorizontal size={14} />
+                  <SlidersHorizontal size={16} />
+                  {activeFilterCount > 0 && (
+                    <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#6A06E4] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                      {activeFilterCount}
+                    </div>
+                  )}
                 </button>
               </TableFilterMenu>
             );
           }
         }
 
-        return null;
+        return (
+          <div
+            key={col.id}
+            className="flex items-center justify-center relative h-full"
+          >
+            <div
+              className={`flex-1 flex ${col.type === "main" ? "justify-start" : "justify-center"}`}
+            >
+              {content}
+            </div>
+            {hasSeparator && (
+              <div className="absolute -right-2 h-4 flex items-center">
+                <Separator
+                  orientation="vertical"
+                  className="bg-slate-900 w-2"
+                />
+              </div>
+            )}
+          </div>
+        );
       })}
     </div>
   );

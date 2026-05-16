@@ -70,50 +70,7 @@ export function AutomationRightCol<T extends SupportedFormValues>({
   const { setValue } = useFormContext<T>();
 
   return (
-    <div className="space-y-4 h-[79vh] overflow-y-auto p-1 flex flex-col justify-center items-center">
-      {includePublicReply && (
-        <PublicReplyToComments
-          enabled={!!publicReplyEnabled}
-          onEnabledChange={(v) =>
-            setValue("publicReplyEnabled" as any, v as any, {
-              shouldDirty: true,
-              shouldTouch: true,
-            })
-          }
-          replies={(publicReplies as any) ?? []}
-          onRepliesChange={(v) =>
-            setValue("publicReplies" as any, v as any, {
-              shouldDirty: true,
-              shouldTouch: true,
-            })
-          }
-        />
-      )}
-
-      <OpeningMessage
-        enabled={!!openingMessageEnabled}
-        onEnabledChange={(v) =>
-          setValue("openingMessageEnabled" as any, v as any, {
-            shouldDirty: true,
-            shouldTouch: true,
-          })
-        }
-        message={(openingMessage as any) ?? ""}
-        onMessageChange={(v) =>
-          setValue("openingMessage" as any, v as any, {
-            shouldDirty: true,
-            shouldTouch: true,
-          })
-        }
-        buttonText={(openingButtonText as any) ?? ""}
-        onButtonTextChange={(v) =>
-          setValue("openingButtonText" as any, v as any, {
-            shouldDirty: true,
-            shouldTouch: true,
-          })
-        }
-      />
-
+    <div className="space-y-4 w-full flex flex-col items-center">
       <SendDm
         message={(dmMessage as any) ?? ""}
         onMessageChange={(v) =>
@@ -139,6 +96,30 @@ export function AutomationRightCol<T extends SupportedFormValues>({
         onIsUploadingChange={onIsUploadingChange}
       />
 
+      <OpeningMessage
+        enabled={!!openingMessageEnabled}
+        onEnabledChange={(v) =>
+          setValue("openingMessageEnabled" as any, v as any, {
+            shouldDirty: true,
+            shouldTouch: true,
+          })
+        }
+        message={(openingMessage as any) ?? ""}
+        onMessageChange={(v) =>
+          setValue("openingMessage" as any, v as any, {
+            shouldDirty: true,
+            shouldTouch: true,
+          })
+        }
+        buttonText={(openingButtonText as any) ?? ""}
+        onButtonTextChange={(v) =>
+          setValue("openingButtonText" as any, v as any, {
+            shouldDirty: true,
+            shouldTouch: true,
+          })
+        }
+      />
+
       <AskToFollow
         enabled={!!askToFollowEnabled}
         onEnabledChange={(v) =>
@@ -155,6 +136,25 @@ export function AutomationRightCol<T extends SupportedFormValues>({
           })
         }
       />
+
+      {includePublicReply && (
+        <PublicReplyToComments
+          enabled={!!publicReplyEnabled}
+          onEnabledChange={(v) =>
+            setValue("publicReplyEnabled" as any, v as any, {
+              shouldDirty: true,
+              shouldTouch: true,
+            })
+          }
+          replies={(publicReplies as any) ?? []}
+          onRepliesChange={(v) =>
+            setValue("publicReplies" as any, v as any, {
+              shouldDirty: true,
+              shouldTouch: true,
+            })
+          }
+        />
+      )}
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { RefreshCw, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RefreshInstaDialog } from "@/app/auth/_components/RefreshInstaDialog";
 import EditableAutomationName from "./EditableAutomationName";
+import AntennaIcon from "@/assets/svgs/antenna_radiowaves_left_right.svg";
+import Image from "next/image";
 
 interface FreshHeaderProps {
   isPending: boolean;
@@ -60,7 +62,7 @@ export default function FreshHeader({
 
       <Button
         type="submit"
-        className="bg-green-500 hover:bg-green-600 transition-all text-white rounded-md justify-center flex items-center p-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100 flex-none h-10 px-4"
+        className="bg-[#068E19] hover:bg-green-600 transition-all text-white rounded-md justify-center flex items-center p-0 disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-100 flex-none h-10 px-4"
         disabled={isPending || isMediaUploading}
       >
         {isActuallyPending ? (
@@ -74,8 +76,12 @@ export default function FreshHeader({
           </>
         ) : (
           <>
-            <Play size={18} fill="currentColor" className="shrink-0" />
-            <span className="ml-2 font-bold whitespace-nowrap">Go Live</span>
+            <Image
+              alt="Go live"
+              src={AntennaIcon}
+              className="w-5 h-5 text-white"
+            />
+            <span className="ml-1 font-bold whitespace-nowrap">Go Live</span>
           </>
         )}
       </Button>

@@ -144,7 +144,7 @@ export function AutomationLayout({
 
       {/* 3-column editor canvas or stacked mobile canvas */}
       <div
-        className="flex-1 rounded-lg overflow-hidden shadow-inner relative"
+        className="flex-1 rounded-lg overflow-hidden shadow-inner relative flex flex-col"
         style={{
           backgroundColor: "#D4D4D4",
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M12 8v8M8 12h8' stroke='%23BEBEBE' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")`,
@@ -153,38 +153,32 @@ export function AutomationLayout({
         }}
       >
         {isMobile ? (
-          <div className="flex flex-col h-full overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {/* Phone preview stays on top */}
-            <div
-              className="flex justify-center p-4 shrink-0 transition-all duration-300 z-10 sticky top-0"
-              style={{ height: "50vh" }}
-            >
+            <div className="flex-1 min-h-0 flex justify-center p-4 transition-all duration-300 z-10">
               <div className="relative h-full w-auto aspect-9/16 max-w-full flex items-start justify-center">
                 {renderMedia()}
               </div>
             </div>
             {/* Widgets scroll below */}
-            <div
-              style={{ height: "30vh" }}
-              className="overflow-y-auto p-4 flex flex-col gap-4"
-            >
+            <div className="overflow-y-auto p-4 flex flex-col gap-4 h-[40vh]">
               {leftCol}
               {rightCol}
             </div>
           </div>
         ) : (
-          <div className="justify-center h-full grid grid-cols-[280px_30rem_280px] gap-4 p-4 overflow-hidden">
-            <div className="flex flex-col justify-center gap-3 overflow-y-auto pr-1">
+          <div className="justify-center flex-1 min-h-0 grid grid-cols-[minmax(250px,280px)_1fr_minmax(250px,280px)] gap-4 p-4 overflow-hidden">
+            <div className="flex flex-col gap-3 overflow-y-auto h-full custom-scrollbar">
               {leftCol}
             </div>
 
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center">
               <div className="relative w-full max-w-[280px] flex items-start justify-center">
                 {renderMedia()}
               </div>
             </div>
 
-            <div className="flex flex-col justify-center gap-3 overflow-y-auto">
+            <div className="flex flex-col gap-3 overflow-y-auto h-full custom-scrollbar">
               {rightCol}
             </div>
           </div>

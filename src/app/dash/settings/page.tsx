@@ -84,7 +84,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
 
         <div className="w-full max-w-4xl flex flex-col md:gap-4 gap-0 md:h-fit h-full">
           {/* Navigation/Header Card (Desktop Only effectively, but keeping for tab switching) */}
-          <div className="bg-white md:rounded-lg rounded-none border-none md:border border-gray-200 p-4 md:p-6 flex items-center justify-between overflow-x-auto rounded-t-xl">
+          <div className="bg-white md:rounded-lg rounded-none border-none md:border border-gray-200 p-4 md:px-8 md:py-4 flex items-center justify-between overflow-x-auto rounded-t-xl">
             <SettingsTabNav />
           </div>
 

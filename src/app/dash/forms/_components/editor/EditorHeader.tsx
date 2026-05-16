@@ -76,12 +76,12 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
           {activeTab === "editor" && form?.slug && (
             <>
               <Button
-                disabled={isLoading}
+                disabled={isLoading || currentStatus !== "PUBLISHED"}
                 onClick={handleCopyLink}
                 size="icon"
                 variant="secondary"
                 title="Copy Link"
-                className="h-10 w-10 bg-slate-900 hover:bg-slate-700 text-white rounded-lg"
+                className="h-10 w-10 bg-slate-900 hover:bg-slate-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Link2 size={15} />
               </Button>
@@ -105,7 +105,7 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
                 <Button
                   onClick={handleSave}
                   disabled={isLoading}
-                  className="bg-red-500 hover:bg-red-600 disabled:bg-slate-300 disabled:text-slate-500 text-white gap-2 h-10 px-4 transition-all rounded-lg"
+                  className="bg-[#D40000] hover:bg-[#D40000]/90 disabled:bg-slate-300 disabled:text-slate-500 text-white gap-2 h-10 px-4 transition-all rounded-lg"
                 >
                   {isSaving ? (
                     <RefreshCw size={15} className="animate-spin" />
@@ -126,7 +126,7 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
                   disabled={isLoading}
                   className="bg-[#068E19] hover:bg-[#057a16] disabled:bg-gray-200 disabled:text-gray-400 text-white gap-2 h-10 px-4 font-semibold transition-all rounded-sm shadow-sm"
                 >
-                  {isSaving ? "Starting..." : "Publish"}
+                  {isSaving ? "Going Live..." : "Publish"}
                   {isSaving ? (
                     <RefreshCw size={13} className="animate-spin" />
                   ) : isMediaUploading ? (
@@ -137,8 +137,8 @@ const EditorHeader = ({ activeTab }: EditorHeaderProps) => {
                 </Button>
               )}
 
-              {/* Update Button - Only if Live */}
-              {currentStatus === "PUBLISHED" && (
+              {/* Update Button - Only if Live and Dirty */}
+              {currentStatus === "PUBLISHED" && methods.formState.isDirty && (
                 <Button
                   onClick={handleUpdate}
                   disabled={isLoading}

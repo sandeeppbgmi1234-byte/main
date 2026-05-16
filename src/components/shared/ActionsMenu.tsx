@@ -92,12 +92,28 @@ export function ActionsMenu({
     }
   };
 
+  const getStyleClasses = (key: string) => {
+    switch (key) {
+      case "duplicate":
+        return "bg-[#F5F0FF] border-[#D6C5FF] text-[#6A06E4] hover:bg-[#EBE0FF]";
+      case "edit":
+        return "bg-[#FFF9EB] border-[#FFE5A0] text-[#D97706] hover:bg-[#FFF3D6]";
+      case "delete":
+      case "stop":
+        return "bg-[#FFF0F0] border-[#FFD6D6] text-[#D40000] hover:bg-[#FFE5E5]";
+      case "activate":
+        return "bg-[#EBFDF5] border-[#D1FAE5] text-[#059669] hover:bg-[#D1FAE5]";
+      default:
+        return "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100";
+    }
+  };
+
   return (
     <div
       ref={menuRef}
-      className="shadow-sm absolute right-0 top-8 z-50 min-w-[150px] rounded-lg border border-slate-100 bg-white animate-in fade-in zoom-in-95 duration-100 p-2"
+      className="absolute right-0 top-10 z-50 min-w-[160px] rounded-xl border border-slate-100 bg-white shadow-xl p-2 flex flex-col gap-1.5 animate-in fade-in zoom-in-95 duration-100"
     >
-      {menuItems.map(({ key, label, className, bg }) => (
+      {menuItems.map(({ key, label, icon: Icon }) => (
         <button
           key={key}
           disabled={
@@ -107,22 +123,21 @@ export function ActionsMenu({
             (key === "duplicate" && isDuplicating)
           }
           onClick={() => handleAction(key)}
-          className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium ${className} ${bg} transition-colors disabled:opacity-50`}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 text-[15px] font-semibold border rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 ${getStyleClasses(key)}`}
         >
           {key === "stop" && isStopping ? (
-            "Stopping…"
-          ) : key === "stop" && !onStop ? (
-            <span className="opacity-70">{label} (Coming soon)</span>
+            <span className="animate-pulse">Stopping…</span>
           ) : key === "delete" && isDeleting ? (
-            "Deleting…"
+            <span className="animate-pulse">Deleting…</span>
           ) : key === "activate" && isToggling ? (
-            toggleLabel
-          ) : key === "activate" && !onActivate ? (
-            <span className="opacity-70">{label} (Coming soon)</span>
+            <span className="animate-pulse">{toggleLabel}</span>
           ) : key === "duplicate" && isDuplicating ? (
-            "Duplicating…"
+            <span className="animate-pulse">Duplicating…</span>
           ) : (
-            <>{label}</>
+            <>
+              <Icon size={18} />
+              {label}
+            </>
           )}
         </button>
       ))}
